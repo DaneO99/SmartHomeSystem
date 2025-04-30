@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
+    x:Class="SmartHomeApp.Views.MainPage"
+    Title="Smart Home Dashboard"
+    x:DataType="vm:MainViewModel">
+
+  <ContentPage.BindingContext>
+    <vm:MainViewModel />
+  </ContentPage.BindingContext>
+
+  <VerticalStackLayout
+      Padding="30"
+      Spacing="20">
+
+    <!-- Header -->
+    <Label
+      Text="Welcome to SmartHome"
+      FontSize="24"
+      HorizontalOptions="Center"
+      TextColor="Black" />
+
+    <!-- Navigate Buttons -->
+    <Button
+      Text="{Binding Devices.Count, StringFormat='Devices ({0})'}"
+      Clicked="GoToDevices"
+      BackgroundColor="Blue"
+      TextColor="White"
+      FontSize="18" />
+
+    <Button
+      Text="{Binding Groups.Count, StringFormat='Rooms ({0})'}"
+      Clicked="GoToRooms"
+      BackgroundColor="Blue"
+      TextColor="White"
+      FontSize="18" />
+
+    <Button
+      Text="Schedules"
+      Clicked="GoToSchedules"
+      BackgroundColor="Blue"
+      TextColor="White"
+      FontSize="18" />
+
+    <!-- Lights toggle -->
+    <HorizontalStackLayout
+        Spacing="10"
+        VerticalOptions="Center">
+      <Label
+        Text="All Lights"
+        VerticalOptions="Center"
+        TextColor="Black"
+        FontSize="18" />
+      <Switch
+        Toggled="OnLightsToggled"
+        OnColor="Blue"
+        ThumbColor="White" />
+    </HorizontalStackLayout>
+
+    <!-- Door locks toggle -->
+    <HorizontalStackLayout
+        Spacing="10"
+        VerticalOptions="Center">
+      <Label
+        Text="All Door Locks"
+        VerticalOptions="Center"
+        TextColor="Black"
+        FontSize="18" />
+      <Switch
+        Toggled="OnLocksToggled"
+        OnColor="Blue"
+        ThumbColor="White" />
+    </HorizontalStackLayout>
+
+    <!-- Alarm button -->
+    <Button
+      x:Name="AlarmButton"
+      Text="Disarmed"
+      BackgroundColor="Blue"
+      TextColor="White"
+      Clicked="OnAlarmButtonClicked"
+      FontSize="18"
+      HorizontalOptions="FillAndExpand" />
+
+  </VerticalStackLayout>
+</ContentPage>

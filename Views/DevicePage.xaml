@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
+    xmlns:models="clr-namespace:SmartHomeApp.Models"
+    xmlns:converters="clr-namespace:SmartHomeApp.Converters;assembly=SmartHomeApp"
+    x:Class="SmartHomeApp.Views.DevicePage"
+    Title="Devices"
+    BackgroundColor="White">
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converters:ThermostatVisibilityConverter x:Key="ThermostatVisibilityConverter" />
+      <Style TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Blue" />
+        <Setter Property="TextColor" Value="White" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <ContentPage.BindingContext>
+    <vm:MainViewModel />
+  </ContentPage.BindingContext>
+
+  <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="20">
+      <!-- Header -->
+      <Label Text="Devices" FontSize="24" TextColor="Black" />
+
+      <!-- Add New Device -->
+      <Entry x:Name="DeviceNameEntry"
+             Placeholder="Enter device name" />
+
+      <Picker x:Name="DeviceTypePicker"
+              Title="Select device type">
+        <Picker.ItemsSource>
+          <x:Array Type="{x:Type x:String}">
+            <x:String>Light</x:String>
+            <x:String>Thermostat</x:String>
+            <x:String>Door Lock</x:String>
+          </x:Array>
+        </Picker.ItemsSource>
+      </Picker>
+
+      <Button Text="Add Device"
+              Clicked="OnAddDeviceClicked" />
+
+      <!-- Devices List -->
+      <CollectionView ItemsSource="{Binding Devices}">
+        <CollectionView.ItemTemplate>
+          <DataTemplate x:DataType="models:Device">
+            <VerticalStackLayout Spacing="10">
+              <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,5">
+                <Label Grid.Column="0"
+                       Text="{Binding Name}"
+                       VerticalOptions="Center"
+                       TextColor="Black" />
+
+                <Switch Grid.Column="1"
+                        IsToggled="{Binding IsOn}"
+                        OnColor="Blue"
+                        ThumbColor="White"
+                        VerticalOptions="Center">
+                  <Switch.Triggers>
+                    <DataTrigger TargetType="Switch"
+                                 Binding="{Binding Type}"
+                                 Value="Thermostat">
+                      <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                  </Switch.Triggers>
+                </Switch>
+
+                <Button Grid.Column="2"
+                        Text="Remove"
+                        Clicked="OnRemoveDeviceClicked"
+                        CommandParameter="{Binding Id}"
+                        BackgroundColor="Red"
+                        TextColor="White" />
+              </Grid>
+
+              <!-- Thermostat controls -->
+              <VerticalStackLayout
+                IsVisible="{Binding Type,
+                            Converter={StaticResource ThermostatVisibilityConverter}}"
+                Spacing="5">
+
+                <Label Text="{Binding Temperature,
+                                StringFormat='Temp: {0}°F'}"
+                       TextColor="Black" />
+
+                <HorizontalStackLayout Spacing="10">
+                  <Entry WidthRequest="60"
+                         Keyboard="Numeric"
+                         Placeholder="50–90" />
+                  <Button Text="Set"
+                          Clicked="OnSetTempClicked" />
+                </HorizontalStackLayout>
+              </VerticalStackLayout>
+            </VerticalStackLayout>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

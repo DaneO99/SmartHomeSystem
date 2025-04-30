@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
+    x:Class="SmartHomeApp.Views.SchedulePage"
+    Title="Schedules"
+    BackgroundColor="White">
+
+  <ContentPage.BindingContext>
+    <!-- We’ll set this in code-behind -->
+    <vm:MainViewModel />
+  </ContentPage.BindingContext>
+
+  <VerticalStackLayout Padding="20" Spacing="20">
+
+    <!-- Create a new on/off schedule -->
+    <Label Text="Create On/Off Schedule" FontSize="24" TextColor="Black"/>
+
+    <Picker
+      x:Name="DevicePicker"
+      Title="Select Device"
+      ItemsSource="{Binding Devices}"
+      ItemDisplayBinding="{Binding Name}" />
+
+    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+      <Label Text="Start:" VerticalOptions="Center" TextColor="Black"/>
+      <TimePicker x:Name="OnTimePicker" Time="08:00:00" />
+      <Label Text="End:"   VerticalOptions="Center" TextColor="Black"/>
+      <TimePicker x:Name="OffTimePicker" Time="20:00:00" />
+    </HorizontalStackLayout>
+
+    <Button
+      Text="Save On/Off Schedule"
+      BackgroundColor="Blue"
+      TextColor="White"
+      Clicked="OnSaveScheduleClicked" />
+
+    <!-- Thermostat scheduling -->
+    <Label Text="(Thermostat schedules go here…)" 
+           FontAttributes="Italic" 
+           TextColor="Gray"
+           IsVisible="False" />
+
+    <!-- Existing schedules -->
+    <Label Text="Existing Schedules" FontSize="20" TextColor="Black"/>
+
+    <CollectionView ItemsSource="{Binding Schedules}">
+      <CollectionView.ItemTemplate>
+        <DataTemplate>
+          <Frame Padding="10"
+                 Margin="0,5"
+                 BorderColor="LightGray"
+                 CornerRadius="8">
+            <HorizontalStackLayout Spacing="10">
+              <!-- Just show the first device ID for demo -->
+              <Label Text="{Binding DeviceIdsJson}" 
+                     VerticalOptions="Center"/>
+              <Label Text="{Binding OnTime, StringFormat='{0:hh\\:mm}'}"
+                     VerticalOptions="Center"/>
+              <Label Text="{Binding OffTime, StringFormat='{0:hh\\:mm}'}"
+                     VerticalOptions="Center"/>
+              <Button Text="Remove"
+                      BackgroundColor="Red"
+                      TextColor="White"
+                      CommandParameter="{Binding Id}"
+                      Clicked="OnRemoveScheduleClicked" />
+            </HorizontalStackLayout>
+          </Frame>
+        </DataTemplate>
+      </CollectionView.ItemTemplate>
+    </CollectionView>
+
+  </VerticalStackLayout>
+</ContentPage>

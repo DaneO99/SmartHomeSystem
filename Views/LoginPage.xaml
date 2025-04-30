@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="SmartHomeApp.Views.LoginPage"
+    Title="Login"
+    BackgroundColor="White">
+
+  <VerticalStackLayout Padding="30" Spacing="20">
+
+    <!-- Title -->
+    <Label
+      Text="Smart Home Login"
+      FontSize="24"
+      TextColor="Black"
+      HorizontalOptions="Center" />
+
+    <!-- Username -->
+    <Entry
+      x:Name="UsernameEntry"
+      Placeholder="Username"
+      TextColor="Black" />
+
+    <!-- Password -->
+    <Entry
+      x:Name="PasswordEntry"
+      Placeholder="Password"
+      IsPassword="True"
+      TextColor="Black" />
+
+    <!-- Show/Hide Password -->
+    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+      <CheckBox
+        x:Name="ShowPasswordCheckbox"
+        CheckedChanged="OnShowPasswordCheckedChanged" />
+      <Label
+        Text="Show Password"
+        VerticalOptions="Center"
+        TextColor="Black" />
+    </HorizontalStackLayout>
+
+    <!-- Login Button -->
+    <Button
+      Text="Login"
+      Clicked="OnLoginClicked"
+      BackgroundColor="Blue"
+      TextColor="White" />
+
+    <!-- Error Message -->
+    <Label
+      x:Name="ErrorLabel"
+      TextColor="Red"
+      IsVisible="False" />
+
+  </VerticalStackLayout>
+</ContentPage>
