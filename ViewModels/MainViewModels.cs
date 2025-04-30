@@ -1,3 +1,4 @@
+// Imports for data binding, collections, LINQ, and async operations
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,20 +12,45 @@ using SmartHomeApp.Services;
 
 namespace SmartHomeApp.ViewModels
 {
+    /// <summary>
+    /// Central view model providing collections and operations for devices,
+    /// groups, and schedules within the application.
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<DeviceModel>    Devices   { get; } = new();
-        public ObservableCollection<DeviceGroup>    Groups    { get; } = new();
+        /// <summary>
+        /// Collection of all device models for UI binding.
+        /// </summary>
+        public ObservableCollection<DeviceModel> Devices { get; } = new();
+
+        /// <summary>
+        /// Collection of all device groups (rooms) for UI binding.
+        /// </summary>
+        public ObservableCollection<DeviceGroup> Groups { get; } = new();
+
+        /// <summary>
+        /// Collection of all device schedules for UI binding.
+        /// </summary>
         public ObservableCollection<DeviceSchedule> Schedules { get; } = new();
 
+        /// <summary>
+        /// Event raised when a property value changes, enabling UI updates.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Initializes data loading and schedule processing on creation.
+        /// </summary>
         public MainViewModel()
         {
-            LoadData();
-            StartScheduler();
+            LoadData();       // Populate collections from database
+            StartScheduler(); // Begin periodic schedule application
         }
 
+        /// <summary>
+        /// Asynchronously loads device, group, and schedule data from the database,
+        /// clearing existing collections before adding fresh entries.
+        /// </summary>
         async void LoadData()
         {
             await DatabaseService.InitializeAsync();
@@ -41,31 +67,41 @@ namespace SmartHomeApp.ViewModels
             foreach (var s in await DatabaseService.GetSchedules())
                 Schedules.Add(s);
 
+            // Notify UI of collection updates
             OnPropertyChanged(nameof(Devices));
             OnPropertyChanged(nameof(Groups));
             OnPropertyChanged(nameof(Schedules));
         }
 
+        /// <summary>
+        /// Configures a timer to execute ApplySchedules every minute.
+        /// </summary>
         void StartScheduler()
         {
-            var timer = new System.Timers.Timer(60_000);
-            timer.Elapsed += async (_,_) => await ApplySchedules();
-            timer.Start();
+            var timer = new System.Timers.Timer(60_000);  // Interval: 60 seconds
+            timer.Elapsed += async (_, _) => await ApplySchedules();
+            timer.Start();                                // Begin timer
         }
 
+        /// <summary>
+        /// Applies active schedules to matching devices based on current time,
+        /// updating states and thermostat settings as configured.
+        /// </summary>
         async Task ApplySchedules()
         {
             var now = DateTime.Now.TimeOfDay;
-            var dirty = false;
+            var dirty = false;  // Tracks whether device collection requires UI refresh
 
+            // Process each enabled schedule
             foreach (var sched in Schedules.Where(s => s.IsEnabled))
             {
                 foreach (var id in sched.DeviceIds)
                 {
                     var dev = Devices.FirstOrDefault(d => d.Id == id);
-                    if (dev == null) continue;
+                    if (dev == null)
+                        continue;  // Skip missing devices
 
-                    // Thermostat vs On/Off
+                    // Handle thermostat schedules when DesiredTemp is set
                     if (sched.DesiredTemp.HasValue)
                     {
                         bool inWindow = now >= sched.OnTime && now < sched.OffTime;
@@ -80,7 +116,7 @@ namespace SmartHomeApp.ViewModels
                             dirty = true;
                         }
 
-                        // store/clear originalTemp
+                        // Manage OriginalTemp storage based on schedule window
                         if (inWindow && !sched.OriginalTemp.HasValue)
                         {
                             sched.OriginalTemp = dev.Temperature;
@@ -94,6 +130,7 @@ namespace SmartHomeApp.ViewModels
                     }
                     else
                     {
+                        // Handle simple on/off schedules
                         bool shouldOn = now >= sched.OnTime && now < sched.OffTime;
                         if (dev.IsOn != shouldOn)
                         {
@@ -105,10 +142,16 @@ namespace SmartHomeApp.ViewModels
                 }
             }
 
+            // Refresh device collection in UI if any changes occurred
             if (dirty)
                 OnPropertyChanged(nameof(Devices));
         }
 
+        /// <summary>
+        /// Toggles power state for all devices matching the specified type.
+        /// </summary>
+        /// <param name="type">Device type to filter (case-insensitive).</param>
+        /// <param name="turnOn">Desired on/off state.</param>
         public async Task ToggleAllOfType(string type, bool turnOn)
         {
             foreach (var d in Devices.Where(d => d.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
@@ -116,12 +159,17 @@ namespace SmartHomeApp.ViewModels
                 d.IsOn = turnOn;
                 await DatabaseService.SaveDevice(d);
             }
-            OnPropertyChanged(nameof(Devices));
+            OnPropertyChanged(nameof(Devices));  // Notify UI of bulk update
         }
 
         /// <summary>
-        /// Creates a new schedule.  Pass desiredTemp only for thermostats.
+        /// Creates and persists a new schedule for a single device;
+        /// includes DesiredTemp only for thermostat devices.
         /// </summary>
+        /// <param name="device">Device to schedule.</param>
+        /// <param name="on">Activation time of day.</param>
+        /// <param name="off">Deactivation time of day.</param>
+        /// <param name="desiredTemp">Optional thermostat temperature setting.</param>
         public async Task AddSchedule(
             DeviceModel device,
             TimeSpan on,
@@ -142,8 +190,9 @@ namespace SmartHomeApp.ViewModels
         }
 
         /// <summary>
-        /// Deletes an existing schedule.
+        /// Removes a schedule by its identifier and updates UI.
         /// </summary>
+        /// <param name="scheduleId">Identifier of the schedule to delete.</param>
         public async Task RemoveSchedule(int scheduleId)
         {
             var sched = Schedules.FirstOrDefault(s => s.Id == scheduleId);
@@ -155,6 +204,10 @@ namespace SmartHomeApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Invokes PropertyChanged event for the specified property name.
+        /// </summary>
+        /// <param name="name">Name of the property that changed.</param>
         void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

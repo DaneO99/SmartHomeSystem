@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    DevicePage.xaml: Page for viewing and managing all devices in the smart home application.
+    Includes controls for adding, toggling, and removing devices, as well as thermostat settings.
+-->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -9,9 +13,13 @@
     Title="Devices"
     BackgroundColor="White">
 
+  <!-- Resource definitions for converters and shared styles -->
   <ContentPage.Resources>
     <ResourceDictionary>
+      <!-- Converter to show thermostat controls only for type == Thermostat -->
       <converters:ThermostatVisibilityConverter x:Key="ThermostatVisibilityConverter" />
+
+      <!-- Default button style: blue background with white text -->
       <Style TargetType="Button">
         <Setter Property="BackgroundColor" Value="Blue" />
         <Setter Property="TextColor" Value="White" />
@@ -19,16 +27,19 @@
     </ResourceDictionary>
   </ContentPage.Resources>
 
+  <!-- Bind this page to MainViewModel for data context -->
   <ContentPage.BindingContext>
     <vm:MainViewModel />
   </ContentPage.BindingContext>
 
+  <!-- Scrollable container to accommodate varying content height -->
   <ScrollView>
     <VerticalStackLayout Padding="20" Spacing="20">
-      <!-- Header -->
+
+      <!-- Page header label -->
       <Label Text="Devices" FontSize="24" TextColor="Black" />
 
-      <!-- Add New Device -->
+      <!-- Section: Add New Device -->
       <Entry x:Name="DeviceNameEntry"
              Placeholder="Enter device name" />
 
@@ -36,6 +47,7 @@
               Title="Select device type">
         <Picker.ItemsSource>
           <x:Array Type="{x:Type x:String}">
+            <!-- Supported device types -->
             <x:String>Light</x:String>
             <x:String>Thermostat</x:String>
             <x:String>Door Lock</x:String>
@@ -43,20 +55,26 @@
         </Picker.ItemsSource>
       </Picker>
 
+      <!-- Button to add a device using values from Entry and Picker -->
       <Button Text="Add Device"
               Clicked="OnAddDeviceClicked" />
 
-      <!-- Devices List -->
+      <!-- Devices list displayed using CollectionView -->
       <CollectionView ItemsSource="{Binding Devices}">
         <CollectionView.ItemTemplate>
+          <!-- DataTemplate strongly typed to Device model -->
           <DataTemplate x:DataType="models:Device">
             <VerticalStackLayout Spacing="10">
+
+              <!-- Device info row: name, on/off switch, remove button -->
               <Grid ColumnDefinitions="*,Auto,Auto" Padding="0,5">
+                <!-- Device name label -->
                 <Label Grid.Column="0"
                        Text="{Binding Name}"
                        VerticalOptions="Center"
                        TextColor="Black" />
 
+                <!-- Power toggle: hidden for thermostat types via DataTrigger -->
                 <Switch Grid.Column="1"
                         IsToggled="{Binding IsOn}"
                         OnColor="Blue"
@@ -71,6 +89,7 @@
                   </Switch.Triggers>
                 </Switch>
 
+                <!-- Remove button with red background -->
                 <Button Grid.Column="2"
                         Text="Remove"
                         Clicked="OnRemoveDeviceClicked"
@@ -79,16 +98,16 @@
                         TextColor="White" />
               </Grid>
 
-              <!-- Thermostat controls -->
+              <!-- Thermostat-specific controls: visible only for Type == Thermostat -->
               <VerticalStackLayout
-                IsVisible="{Binding Type,
-                            Converter={StaticResource ThermostatVisibilityConverter}}"
+                IsVisible="{Binding Type, Converter={StaticResource ThermostatVisibilityConverter}}"
                 Spacing="5">
 
-                <Label Text="{Binding Temperature,
-                                StringFormat='Temp: {0}°F'}"
+                <!-- Display current temperature -->
+                <Label Text="{Binding Temperature, StringFormat='Temp: {0}°F'}"
                        TextColor="Black" />
 
+                <!-- Controls to set a new temperature -->
                 <HorizontalStackLayout Spacing="10">
                   <Entry WidthRequest="60"
                          Keyboard="Numeric"
@@ -97,10 +116,12 @@
                           Clicked="OnSetTempClicked" />
                 </HorizontalStackLayout>
               </VerticalStackLayout>
+
             </VerticalStackLayout>
           </DataTemplate>
         </CollectionView.ItemTemplate>
       </CollectionView>
+
     </VerticalStackLayout>
   </ScrollView>
 </ContentPage>

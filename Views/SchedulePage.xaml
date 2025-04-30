@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+  SchedulePage.xaml: Page for creating and managing schedules
+  including on/off schedules for devices and listing existing schedules.
+-->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -7,44 +11,52 @@
     Title="Schedules"
     BackgroundColor="White">
 
+  <!-- Bind to MainViewModel; code-behind will assign actual instance -->
   <ContentPage.BindingContext>
-    <!-- We’ll set this in code-behind -->
     <vm:MainViewModel />
   </ContentPage.BindingContext>
 
   <VerticalStackLayout Padding="20" Spacing="20">
 
-    <!-- Create a new on/off schedule -->
-    <Label Text="Create On/Off Schedule" FontSize="24" TextColor="Black"/>
+    <!-- Section: Create a new on/off schedule -->
+    <Label Text="Create On/Off Schedule"
+           FontSize="24"
+           TextColor="Black" />
 
+    <!-- Picker to select a device for the schedule -->
     <Picker
       x:Name="DevicePicker"
       Title="Select Device"
       ItemsSource="{Binding Devices}"
       ItemDisplayBinding="{Binding Name}" />
 
+    <!-- Time selection for start and end times -->
     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-      <Label Text="Start:" VerticalOptions="Center" TextColor="Black"/>
+      <Label Text="Start:" VerticalOptions="Center" TextColor="Black" />
       <TimePicker x:Name="OnTimePicker" Time="08:00:00" />
-      <Label Text="End:"   VerticalOptions="Center" TextColor="Black"/>
+      <Label Text="End:"   VerticalOptions="Center" TextColor="Black" />
       <TimePicker x:Name="OffTimePicker" Time="20:00:00" />
     </HorizontalStackLayout>
 
+    <!-- Button to save the new on/off schedule -->
     <Button
       Text="Save On/Off Schedule"
       BackgroundColor="Blue"
       TextColor="White"
       Clicked="OnSaveScheduleClicked" />
 
-    <!-- Thermostat scheduling -->
-    <Label Text="(Thermostat schedules go here…)" 
-           FontAttributes="Italic" 
+    <!-- Placeholder for thermostat-specific scheduling UI -->
+    <Label Text="(Thermostat schedules go here…)"
+           FontAttributes="Italic"
            TextColor="Gray"
            IsVisible="False" />
 
-    <!-- Existing schedules -->
-    <Label Text="Existing Schedules" FontSize="20" TextColor="Black"/>
+    <!-- Section: Display existing schedules -->
+    <Label Text="Existing Schedules"
+           FontSize="20"
+           TextColor="Black" />
 
+    <!-- List of current schedules with remove action -->
     <CollectionView ItemsSource="{Binding Schedules}">
       <CollectionView.ItemTemplate>
         <DataTemplate>
@@ -53,13 +65,16 @@
                  BorderColor="LightGray"
                  CornerRadius="8">
             <HorizontalStackLayout Spacing="10">
-              <!-- Just show the first device ID for demo -->
-              <Label Text="{Binding DeviceIdsJson}" 
-                     VerticalOptions="Center"/>
-              <Label Text="{Binding OnTime, StringFormat='{0:hh\\:mm}'}"
-                     VerticalOptions="Center"/>
-              <Label Text="{Binding OffTime, StringFormat='{0:hh\\:mm}'}"
-                     VerticalOptions="Center"/>
+              <!-- Display the JSON of device IDs for clarity -->
+              <Label Text="{Binding DeviceIdsJson}"
+                     VerticalOptions="Center" />
+              <!-- Display start time formatted as HH:mm -->
+              <Label Text="{Binding OnTime, StringFormat='{0:hh\:mm}'}"
+                     VerticalOptions="Center" />
+              <!-- Display end time formatted as HH:mm -->
+              <Label Text="{Binding OffTime, StringFormat='{0:hh\:mm}'}"
+                     VerticalOptions="Center" />
+              <!-- Button to remove this schedule -->
               <Button Text="Remove"
                       BackgroundColor="Red"
                       TextColor="White"

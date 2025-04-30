@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+    LoginPage.xaml: Page for user authentication in the SmartHomeApp.
+    Includes fields for username and password input, a show-password toggle,
+    login action, and error display.
+-->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -6,30 +11,32 @@
     Title="Login"
     BackgroundColor="White">
 
+  <!-- Vertical layout with padding and spacing between elements -->
   <VerticalStackLayout Padding="30" Spacing="20">
 
-    <!-- Title -->
+    <!-- Page title label, centered horizontally -->
     <Label
       Text="Smart Home Login"
       FontSize="24"
       TextColor="Black"
       HorizontalOptions="Center" />
 
-    <!-- Username -->
+    <!-- Username input field -->
     <Entry
       x:Name="UsernameEntry"
       Placeholder="Username"
       TextColor="Black" />
 
-    <!-- Password -->
+    <!-- Password input field with masking enabled -->
     <Entry
       x:Name="PasswordEntry"
       Placeholder="Password"
       IsPassword="True"
       TextColor="Black" />
 
-    <!-- Show/Hide Password -->
+    <!-- Toggle for showing or hiding password text -->
     <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+      <!-- Checkbox to control IsPassword property on PasswordEntry -->
       <CheckBox
         x:Name="ShowPasswordCheckbox"
         CheckedChanged="OnShowPasswordCheckedChanged" />
@@ -39,14 +46,14 @@
         TextColor="Black" />
     </HorizontalStackLayout>
 
-    <!-- Login Button -->
+    <!-- Button to initiate login process -->
     <Button
       Text="Login"
       Clicked="OnLoginClicked"
       BackgroundColor="Blue"
       TextColor="White" />
 
-    <!-- Error Message -->
+    <!-- Label to display authentication errors; hidden by default -->
     <Label
       x:Name="ErrorLabel"
       TextColor="Red"

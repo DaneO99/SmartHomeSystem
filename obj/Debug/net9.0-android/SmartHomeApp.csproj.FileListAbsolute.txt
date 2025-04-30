@@ -1913,3 +1913,4 @@
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/android/src/crc64d6358e7bf64fbac4/OfflineSpeechToTextImplementation_SpeechRecognitionListener.java
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/android/src/crc64d6358e7bf64fbac4/RecognitionSupportCallback.java
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/android/src/crc64d6358e7bf64fbac4/SpeechToTextImplementation_SpeechRecognitionListener.java
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/SmartHomeApp.sourcelink.json

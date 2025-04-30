@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+  MainPage.xaml: Dashboard for SmartHomeApp displaying summary counts,
+  navigation buttons, and quick toggles for lights, locks, and alarm state.
+-->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -7,22 +11,24 @@
     Title="Smart Home Dashboard"
     x:DataType="vm:MainViewModel">
 
+  <!-- Bind the page to MainViewModel for property binding -->
   <ContentPage.BindingContext>
     <vm:MainViewModel />
   </ContentPage.BindingContext>
 
+  <!-- Vertical layout container with padding and spacing -->
   <VerticalStackLayout
       Padding="30"
       Spacing="20">
 
-    <!-- Header -->
+    <!-- Dashboard header -->
     <Label
       Text="Welcome to SmartHome"
       FontSize="24"
       HorizontalOptions="Center"
       TextColor="Black" />
 
-    <!-- Navigate Buttons -->
+    <!-- Navigation button to Devices page showing device count -->
     <Button
       Text="{Binding Devices.Count, StringFormat='Devices ({0})'}"
       Clicked="GoToDevices"
@@ -30,6 +36,7 @@
       TextColor="White"
       FontSize="18" />
 
+    <!-- Navigation button to Rooms (Groups) page showing room count -->
     <Button
       Text="{Binding Groups.Count, StringFormat='Rooms ({0})'}"
       Clicked="GoToRooms"
@@ -37,6 +44,7 @@
       TextColor="White"
       FontSize="18" />
 
+    <!-- Navigation button to Schedules page -->
     <Button
       Text="Schedules"
       Clicked="GoToSchedules"
@@ -44,7 +52,7 @@
       TextColor="White"
       FontSize="18" />
 
-    <!-- Lights toggle -->
+    <!-- Toggle control for turning all lights on/off -->
     <HorizontalStackLayout
         Spacing="10"
         VerticalOptions="Center">
@@ -59,7 +67,7 @@
         ThumbColor="White" />
     </HorizontalStackLayout>
 
-    <!-- Door locks toggle -->
+    <!-- Toggle control for locking/unlocking all door locks -->
     <HorizontalStackLayout
         Spacing="10"
         VerticalOptions="Center">
@@ -74,7 +82,7 @@
         ThumbColor="White" />
     </HorizontalStackLayout>
 
-    <!-- Alarm button -->
+    <!-- Button for arming/disarming the alarm system -->
     <Button
       x:Name="AlarmButton"
       Text="Disarmed"
