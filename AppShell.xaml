@@ -1,39 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-  AppShell.xaml: Defines the application shell (flyout menu) and binds to
-  the single shared MainViewModel (AppShell.AppViewModel).
--->
 <Shell
     x:Class="SmartHomeApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SmartHomeApp"
     xmlns:views="clr-namespace:SmartHomeApp.Views;assembly=SmartHomeApp"
     Title="SmartHomeApp"
-    BindingContext="{x:Static local:AppShell.AppViewModel}">
+    FlyoutBehavior="Flyout">
 
   <!-- Dashboard -->
-  <FlyoutItem Title="Dashboard">
-    <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
+  <FlyoutItem
+      Title="Dashboard"
+      Route="dashboard"
+      Icon="logo.png">
+    <ShellContent
+        Route="dashboard"
+        ContentTemplate="{DataTemplate views:MainPage}" />
   </FlyoutItem>
 
   <!-- Devices -->
-  <FlyoutItem Title="Devices">
-    <ShellContent ContentTemplate="{DataTemplate views:DevicePage}" />
+  <FlyoutItem
+      Title="Devices"
+      Route="devices"
+      Icon="devicelogo.png">
+    <ShellContent
+        Route="devices"
+        ContentTemplate="{DataTemplate views:DevicePage}" />
   </FlyoutItem>
 
   <!-- Rooms -->
-  <FlyoutItem Title="Rooms">
-    <ShellContent ContentTemplate="{DataTemplate views:RoomPage}" />
+  <FlyoutItem
+      Title="Rooms"
+      Route="rooms"
+      Icon="roomlogo.png">
+    <ShellContent
+        Route="rooms"
+        ContentTemplate="{DataTemplate views:RoomPage}" />
   </FlyoutItem>
 
   <!-- Schedules -->
-  <FlyoutItem Title="Schedules">
-    <ShellContent ContentTemplate="{DataTemplate views:SchedulePage}" />
+  <FlyoutItem
+      Title="Schedules"
+      Route="schedules"
+      Icon="schedulelogo.png">
+    <ShellContent
+        Route="schedules"
+        ContentTemplate="{DataTemplate views:SchedulePage}" />
   </FlyoutItem>
 
-  <!-- Logout at bottom of flyout -->
+  <!-- Logout -->
   <MenuItem
-    Text="Logout"
-    Clicked="OnLogoutClicked" />
+      Text="Logout"
+      IconImageSource="locklogo.png"
+      Clicked="OnLogoutClicked" />
+
 </Shell>

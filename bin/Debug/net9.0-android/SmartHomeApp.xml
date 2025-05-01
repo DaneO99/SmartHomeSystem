@@ -16,9 +16,7 @@
         </member>
         <member name="T:SmartHomeApp.Converters.DeviceIdsToNamesConverter">
             <summary>
-            Converts a comma-separated list of device IDs into a
-            comma-separated list of device names, looking them up
-            from the shared MainViewModel.Devices collection.
+            Converts a comma-separated list of device IDs into a comma-separated list of device Names.
             </summary>
         </member>
         <member name="T:SmartHomeApp.Converters.NullToBoolConverter">
@@ -400,28 +398,6 @@
             Raises the <see cref="E:SmartHomeApp.ViewModels.ScheduleDisplay.PropertyChanged"/> event for a given property.
             </summary>
             <param name="propertyName">Name of the changed property.</param>
-        </member>
-        <member name="T:SmartHomeApp.Views.DevicePage">
-            <summary>
-            Code‐behind for DevicePage.xaml.
-            Implements add/remove and animated thermostat updates.
-            </summary>
-        </member>
-        <member name="M:SmartHomeApp.Views.DevicePage.OnAddDeviceClicked(System.Object,System.EventArgs)">
-            <summary>
-            Handler for the "+" button: adds a new device.
-            </summary>
-        </member>
-        <member name="M:SmartHomeApp.Views.DevicePage.OnRemoveDeviceClicked(System.Object,System.EventArgs)">
-            <summary>
-            Handler for the red "✕" button: removes the device.
-            </summary>
-        </member>
-        <member name="M:SmartHomeApp.Views.DevicePage.OnSetTempClicked(System.Object,System.EventArgs)">
-            <summary>
-            Handler for the "Set" button in the thermostat expander:
-            animates the label from current to target one degree at a time.
-            </summary>
         </member>
         <member name="T:SmartHomeApp.Views.LoginPage">
             <summary>

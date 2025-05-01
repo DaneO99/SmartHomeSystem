@@ -82,10 +82,10 @@
             CornerRadius="8"
             HeightRequest="60"/>
 
-    <!-- Schedule List Button -->
+    <!-- Navigate to SchedulePage -->
     <Button Grid.Row="5"
-            Text="View Schedules"
-            Clicked="GoToScheduleList"
+            Text="Schedules"
+            Clicked="GoToSchedules"
             BackgroundColor="Blue"
             TextColor="White"
             FontSize="18"

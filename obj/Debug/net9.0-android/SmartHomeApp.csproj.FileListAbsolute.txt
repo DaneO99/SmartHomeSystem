@@ -2340,3 +2340,9 @@
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/r/drawable/homelogo.png
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/r/drawable/roomlogo.png
 /Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/r/drawable/schedulelogo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/r/drawable/locklogo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/sp/drawable-hdpi/logo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/sp/drawable-mdpi/logo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/sp/drawable-xhdpi/logo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/sp/drawable-xxhdpi/logo.png
+/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/obj/Debug/net9.0-android/resizetizer/sp/drawable-xxxhdpi/logo.png

@@ -2,22 +2,90 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
     xmlns:models="clr-namespace:SmartHomeApp.Models"
+    xmlns:converters="clr-namespace:SmartHomeApp.Converters;assembly=SmartHomeApp"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="SmartHomeApp.Views.DevicePage"
     Title="Devices"
     BackgroundColor="White"
     x:DataType="vm:MainViewModel">
 
   <ContentPage.Resources>
-    <!-- Implicit Button style -->
+    <!-- Hide thermostat switches -->
+    <converters:ThermostatVisibilityConverter x:Key="ThermostatVisibilityConverter" />
+
+    <!-- Template for each device row -->
+    <DataTemplate x:Key="DeviceItemTemplate" x:DataType="models:Device">
+      <VerticalStackLayout Spacing="10" Padding="0,5">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+          <Label
+            Grid.Column="0"
+            Text="{Binding Name}"
+            VerticalOptions="Center"
+            TextColor="Black" />
+
+          <Switch
+            Grid.Column="1"
+            IsToggled="{Binding IsOn}"
+            OnColor="Blue"
+            ThumbColor="White"
+            VerticalOptions="Center">
+            <Switch.Triggers>
+              <DataTrigger
+                TargetType="Switch"
+                Binding="{Binding Type}"
+                Value="Thermostat">
+                <Setter Property="IsVisible" Value="False" />
+              </DataTrigger>
+            </Switch.Triggers>
+          </Switch>
+
+          <Button
+            Grid.Column="2"
+            Text="✕"
+            BackgroundColor="Red"
+            TextColor="Black"
+            CornerRadius="8"
+            WidthRequest="36"
+            HeightRequest="36"
+            Clicked="OnRemoveDeviceClicked"
+            CommandParameter="{Binding Id}"
+            HorizontalOptions="End" />
+        </Grid>
+
+        <!-- Thermostat-only -->
+        <VerticalStackLayout
+          IsVisible="{Binding Type, Converter={StaticResource ThermostatVisibilityConverter}}"
+          Spacing="5">
+          <Label
+            Text="{Binding Temperature, StringFormat='Temp: {0}°F'}"
+            TextColor="Black" />
+
+          <HorizontalStackLayout Spacing="10">
+            <Entry
+              WidthRequest="60"
+              Keyboard="Numeric"
+              Placeholder="50–90" />
+            <Button
+              Text="Set"
+              Clicked="OnSetTempClicked" />
+          </HorizontalStackLayout>
+        </VerticalStackLayout>
+      </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Button style -->
     <Style TargetType="Button">
-      <Setter Property="BackgroundColor" Value="Blue"/>
-      <Setter Property="TextColor" Value="White"/>
-      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="BackgroundColor" Value="Blue" />
+      <Setter Property="TextColor" Value="White" />
+      <Setter Property="CornerRadius" Value="8" />
     </Style>
   </ContentPage.Resources>
+
+  <ContentPage.BindingContext>
+    <vm:MainViewModel />
+  </ContentPage.BindingContext>
 
   <ScrollView>
     <VerticalStackLayout Padding="20" Spacing="20">
@@ -29,145 +97,72 @@
         WidthRequest="60"
         HorizontalOptions="Center" />
 
-      <!-- Add Device -->
-      <Label Text="Add Device" FontAttributes="Bold" FontSize="18"/>
-      <HorizontalStackLayout Spacing="10">
-        <Entry x:Name="DeviceNameEntry"
-               Placeholder="Name"
-               HorizontalOptions="FillAndExpand"/>
-        <Picker x:Name="DeviceTypePicker" Title="Type">
-          <Picker.ItemsSource>
-            <x:Array Type="{x:Type x:String}">
-              <x:String>Light</x:String>
-              <x:String>Thermostat</x:String>
-              <x:String>Door Lock</x:String>
-            </x:Array>
-          </Picker.ItemsSource>
-        </Picker>
-        <Button Text="+" Clicked="OnAddDeviceClicked" WidthRequest="40" HeightRequest="40"/>
-      </HorizontalStackLayout>
+      <!-- Add New Device -->
+      <Label Text="Add New Device"
+             FontSize="20"
+             TextColor="Black" />
 
-      <!-- Lights Section -->
+      <Entry x:Name="DeviceNameEntry"
+             Placeholder="Enter device name"
+             TextColor="Black"
+             HorizontalOptions="FillAndExpand" />
+
+      <Picker x:Name="DeviceTypePicker"
+              Title="Select device type"
+              HorizontalOptions="FillAndExpand">
+        <Picker.ItemsSource>
+          <x:Array Type="{x:Type x:String}">
+            <x:String>Light</x:String>
+            <x:String>Thermostat</x:String>
+            <x:String>Door Lock</x:String>
+          </x:Array>
+        </Picker.ItemsSource>
+      </Picker>
+
+      <Button Text="Add Device"
+              Clicked="OnAddDeviceClicked"
+              HorizontalOptions="Start" />
+
+      <!-- Lights Dropdown -->
       <toolkit:Expander>
         <toolkit:Expander.Header>
-          <Grid ColumnDefinitions="*,Auto">
-            <Label Text="Lights" FontAttributes="Bold" FontSize="16"/>
-            <Label Text="⌄" FontSize="16" HorizontalOptions="End"/>
-          </Grid>
+          <Label Text="Lights"
+                 FontSize="18"
+                 TextColor="Black"
+                 HorizontalOptions="FillAndExpand" />
         </toolkit:Expander.Header>
-        <toolkit:Expander.Content>
-          <CollectionView ItemsSource="{Binding Lights}">
-            <CollectionView.ItemTemplate>
-              <DataTemplate x:DataType="models:Device">
-                <Grid ColumnDefinitions="*,Auto,Auto" Padding="5">
-                  <Label Text="{Binding Name}" VerticalOptions="Center"/>
-                  <Switch Grid.Column="1"
-                          IsToggled="{Binding IsOn}"
-                          OnColor="White"
-                          ThumbColor="Blue"
-                          VerticalOptions="Center"/>
-                  <Button Grid.Column="2"
-                          Text="✕"
-                          FontAttributes="Bold"
-                          FontSize="18"
-                          TextColor="Black"
-                          BackgroundColor="Red"
-                          Padding="0"
-                          WidthRequest="30"
-                          HeightRequest="30"
-                          HorizontalOptions="End"
-                          VerticalOptions="Center"
-                          Clicked="OnRemoveDeviceClicked"
-                          CommandParameter="{Binding Id}"/>
-                </Grid>
-              </DataTemplate>
-            </CollectionView.ItemTemplate>
-          </CollectionView>
-        </toolkit:Expander.Content>
+        <CollectionView
+          x:Name="LightsList"
+          ItemsLayout="VerticalList"
+          ItemTemplate="{StaticResource DeviceItemTemplate}" />
       </toolkit:Expander>
 
-      <!-- Door Locks Section -->
+      <!-- Door Locks Dropdown -->
       <toolkit:Expander>
         <toolkit:Expander.Header>
-          <Grid ColumnDefinitions="*,Auto">
-            <Label Text="Door Locks" FontAttributes="Bold" FontSize="16"/>
-            <Label Text="⌄" FontSize="16" HorizontalOptions="End"/>
-          </Grid>
+          <Label Text="Door Locks"
+                 FontSize="18"
+                 TextColor="Black"
+                 HorizontalOptions="FillAndExpand" />
         </toolkit:Expander.Header>
-        <toolkit:Expander.Content>
-          <CollectionView ItemsSource="{Binding DoorLocks}">
-            <CollectionView.ItemTemplate>
-              <DataTemplate x:DataType="models:Device">
-                <Grid ColumnDefinitions="*,Auto,Auto" Padding="5">
-                  <Label Text="{Binding Name}" VerticalOptions="Center"/>
-                  <Switch Grid.Column="1"
-                          IsToggled="{Binding IsOn}"
-                          OnColor="White"
-                          ThumbColor="Blue"
-                          VerticalOptions="Center"/>
-                  <Button Grid.Column="2"
-                          Text="✕"
-                          FontAttributes="Bold"
-                          FontSize="18"
-                          TextColor="Black"
-                          BackgroundColor="Red"
-                          Padding="0"
-                          WidthRequest="30"
-                          HeightRequest="30"
-                          HorizontalOptions="End"
-                          VerticalOptions="Center"
-                          Clicked="OnRemoveDeviceClicked"
-                          CommandParameter="{Binding Id}"/>
-                </Grid>
-              </DataTemplate>
-            </CollectionView.ItemTemplate>
-          </CollectionView>
-        </toolkit:Expander.Content>
+        <CollectionView
+          x:Name="LocksList"
+          ItemsLayout="VerticalList"
+          ItemTemplate="{StaticResource DeviceItemTemplate}" />
       </toolkit:Expander>
 
-      <!-- Thermostat Section -->
+      <!-- Thermostat Dropdown -->
       <toolkit:Expander>
         <toolkit:Expander.Header>
-          <Grid ColumnDefinitions="*,Auto">
-            <Label Text="Thermostat" FontAttributes="Bold" FontSize="16"/>
-            <Label Text="⌄" FontSize="16" HorizontalOptions="End"/>
-          </Grid>
+          <Label Text="Thermostat"
+                 FontSize="18"
+                 TextColor="Black"
+                 HorizontalOptions="FillAndExpand" />
         </toolkit:Expander.Header>
-        <toolkit:Expander.Content>
-          <CollectionView ItemsSource="{Binding Thermostats}">
-            <CollectionView.ItemTemplate>
-              <DataTemplate x:DataType="models:Device">
-                <VerticalStackLayout Padding="5" Spacing="5">
-                  <Label Text="{Binding Name}" FontAttributes="Bold"/>
-                  <HorizontalStackLayout Spacing="10">
-                    <!-- Animated label -->
-                    <Label x:Name="TempLabel"
-                           Text="{Binding Temperature, StringFormat='Temp: {0}°F'}"
-                           VerticalOptions="Center"/>
-                    <!-- Plain entry for user input -->
-                    <Entry x:Name="TempEntry"
-                           WidthRequest="60"
-                           Keyboard="Numeric"
-                           Placeholder="60–90"/>
-                    <Button Text="Set" Clicked="OnSetTempClicked"/>
-                    <Button Text="✕"
-                            FontAttributes="Bold"
-                            FontSize="18"
-                            TextColor="Black"
-                            BackgroundColor="Red"
-                            Padding="0"
-                            WidthRequest="30"
-                            HeightRequest="30"
-                            HorizontalOptions="End"
-                            VerticalOptions="Center"
-                            Clicked="OnRemoveDeviceClicked"
-                            CommandParameter="{Binding Id}"/>
-                  </HorizontalStackLayout>
-                </VerticalStackLayout>
-              </DataTemplate>
-            </CollectionView.ItemTemplate>
-          </CollectionView>
-        </toolkit:Expander.Content>
+        <CollectionView
+          x:Name="ThermostatList"
+          ItemsLayout="VerticalList"
+          ItemTemplate="{StaticResource DeviceItemTemplate}" />
       </toolkit:Expander>
 
     </VerticalStackLayout>

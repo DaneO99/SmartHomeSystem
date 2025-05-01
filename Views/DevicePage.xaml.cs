@@ -1,32 +1,41 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
 using Microsoft.Maui.Controls;
+using SmartHomeApp.ViewModels;
 using SmartHomeApp.Services;
-using SmartHomeApp.ViewModels;       // For MainViewModel
-using static SmartHomeApp.AppShell;  // For AppViewModel
 using DeviceModel = SmartHomeApp.Models.Device;
+using static SmartHomeApp.AppShell;
 
 namespace SmartHomeApp.Views
 {
-    /// <summary>
-    /// Code‐behind for DevicePage.xaml.
-    /// Implements add/remove and animated thermostat updates.
-    /// </summary>
     public partial class DevicePage : ContentPage
     {
-        // Shortcut to the shared ViewModel
         MainViewModel Vm => AppViewModel;
 
         public DevicePage()
         {
             InitializeComponent();
             BindingContext = Vm;
+
+            // Initial population
+            SetupLists();
+
+            // Update on any change
+            Vm.Devices.CollectionChanged += OnDevicesChanged;
         }
 
-        /// <summary>
-        /// Handler for the "+" button: adds a new device.
-        /// </summary>
+        void OnDevicesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            => SetupLists();
+
+        void SetupLists()
+        {
+            // Filter by Type
+            LightsList.ItemsSource      = Vm.Devices.Where(d => d.Type.Equals("Light", StringComparison.OrdinalIgnoreCase));
+            LocksList.ItemsSource       = Vm.Devices.Where(d => d.Type.Equals("Door Lock", StringComparison.OrdinalIgnoreCase));
+            ThermostatList.ItemsSource  = Vm.Devices.Where(d => d.Type.Equals("Thermostat", StringComparison.OrdinalIgnoreCase));
+        }
+
         private async void OnAddDeviceClicked(object sender, EventArgs e)
         {
             var name = DeviceNameEntry.Text?.Trim();
@@ -36,63 +45,54 @@ namespace SmartHomeApp.Views
 
             var device = new DeviceModel
             {
-                Name = name,
-                Type = type,
-                IsOn = false,
+                Name        = name,
+                Type        = type,
+                IsOn        = false,
                 Temperature = 75
             };
 
             await DatabaseService.SaveDevice(device);
             Vm.Devices.Add(device);
+            SetupLists();
 
-            DeviceNameEntry.Text = "";
+            DeviceNameEntry.Text      = string.Empty;
             DeviceTypePicker.SelectedIndex = -1;
         }
 
-        /// <summary>
-        /// Handler for the red "✕" button: removes the device.
-        /// </summary>
         private async void OnRemoveDeviceClicked(object sender, EventArgs e)
         {
             if ((sender as Button)?.CommandParameter is not int id)
                 return;
 
-            var dev = Vm.Devices.FirstOrDefault(d => d.Id == id);
-            if (dev == null) return;
+            var device = Vm.Devices.FirstOrDefault(d => d.Id == id);
+            if (device == null) return;
 
-            await DatabaseService.DeleteDevice(dev);
-            Vm.Devices.Remove(dev);
+            await DatabaseService.DeleteDevice(device);
+            Vm.Devices.Remove(device);
+            SetupLists();
         }
 
-        /// <summary>
-        /// Handler for the "Set" button in the thermostat expander:
-        /// animates the label from current to target one degree at a time.
-        /// </summary>
         private async void OnSetTempClicked(object sender, EventArgs e)
         {
             if (sender is Button btn && btn.BindingContext is DeviceModel dev)
             {
-                // Find the Entry next to this button
-                if (btn.Parent is HorizontalStackLayout layout &&
-                    layout.Children.OfType<Entry>().FirstOrDefault() is Entry entry &&
-                    int.TryParse(entry.Text, out var rawTarget))
+                if (btn.Parent is HorizontalStackLayout h
+                    && h.Children.OfType<Entry>().FirstOrDefault() is Entry entry
+                    && int.TryParse(entry.Text, out var target))
                 {
-                    // Clamp user input to [60, 90]
-                    var target = Math.Clamp(rawTarget, 60, 90);
+                    // Clamp
+                    target = Math.Clamp(target, 50, 90);
 
-                    // Animate label (bound to dev.Temperature)
-                    var current = dev.Temperature;
-                    if (current != target)
+                    // Animate stepping
+                    var old = dev.Temperature;
+                    var step = target > old ? 1 : -1;
+                    for (var t = old; t != target; t += step)
                     {
-                        var step = target > current ? 1 : -1;
-                        for (var t = current; t != target; t += step)
-                        {
-                            dev.Temperature = t + step;
-                            await Task.Delay(200);  // pause for counter effect
-                        }
+                        dev.Temperature = t + step;
+                        await Task.Delay(50);
                     }
 
-                    // Persist the final temperature
+                    // Persist
                     await DatabaseService.SaveDevice(dev);
                 }
             }
