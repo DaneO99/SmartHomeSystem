@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
+  xmlns:models="clr-namespace:SmartHomeApp.Models"
+  x:Class="SmartHomeApp.Views.ScheduleListPage"
+  Title="All Schedules"
+  BackgroundColor="White"
+  x:DataType="vm:MainViewModel">
+
+  <VerticalStackLayout Padding="20" Spacing="20">
+
+    <!-- Logo -->
+    <Image Source="schedulelogo.png"
+           HeightRequest="60"
+           WidthRequest="60"
+           HorizontalOptions="Center"/>
+
+    <!-- Header + New button -->
+    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+      <Label Text="All Schedules" FontSize="24" TextColor="Black" HorizontalOptions="StartAndExpand"/>
+      <Button Text="New" Clicked="OnNewClicked" />
+    </HorizontalStackLayout>
+
+    <!-- Scrollable list -->
+    <CollectionView
+      ItemsSource="{Binding Schedules}"
+      SelectionMode="None"
+      RemainingItemsThreshold="1"
+      RemainingItemsThresholdReached="OnReorderCompleted">
+
+      <CollectionView.ItemTemplate>
+        <DataTemplate x:DataType="models:DeviceSchedule">
+          <Frame Padding="10"
+                 Margin="0,5"
+                 BorderColor="LightGray"
+                 CornerRadius="8">
+            <VerticalStackLayout Spacing="8">
+
+              <Label Text="{Binding Name}"
+                     FontAttributes="Bold"
+                     FontSize="18"
+                     TextColor="Black"/>
+
+              <Label Text="{Binding DeviceIdsJson}" />
+
+              <Label Text="{Binding OnTime, StringFormat='Start: {0:hh\\:mm}'}" />
+              <Label Text="{Binding OffTime, StringFormat='End: {0:hh\\:mm}'}" />
+
+              <Label Text="Repeat:"
+                     FontAttributes="Bold"/>
+              <Label Text="{Binding Sunday, StringFormat='Sun: {0}'}"/>
+              <Label Text="{Binding Monday, StringFormat='Mon: {0}'}"/>
+              <Label Text="{Binding Tuesday, StringFormat='Tue: {0}'}"/>
+              <Label Text="{Binding Wednesday, StringFormat='Wed: {0}'}"/>
+              <Label Text="{Binding Thursday, StringFormat='Thu: {0}'}"/>
+              <Label Text="{Binding Friday, StringFormat='Fri: {0}'}"/>
+              <Label Text="{Binding Saturday, StringFormat='Sat: {0}'}"/>
+
+              <HorizontalStackLayout Spacing="10">
+                <Button Text="Edit" Clicked="OnEditClicked" CommandParameter="{Binding Id}" />
+                <Button Text="Delete"
+                        BackgroundColor="Red"
+                        TextColor="White"
+                        Clicked="OnDeleteClicked"
+                        CommandParameter="{Binding Id}"/>
+              </HorizontalStackLayout>
+            </VerticalStackLayout>
+          </Frame>
+        </DataTemplate>
+      </CollectionView.ItemTemplate>
+    </CollectionView>
+
+  </VerticalStackLayout>
+</ContentPage>

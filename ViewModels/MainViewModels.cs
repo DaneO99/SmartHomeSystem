@@ -1,125 +1,166 @@
-// Imports for data binding, collections, LINQ, and async operations
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using DeviceModel    = SmartHomeApp.Models.Device;
-using DeviceGroup    = SmartHomeApp.Models.DeviceGroup;
-using DeviceSchedule = SmartHomeApp.Models.DeviceSchedule;
-using SmartHomeApp.Services;
+using Microsoft.Maui.Dispatching;    // For MainThread
+using SmartHomeApp.Services;         // For DatabaseService
+
+// Model aliases to avoid conflicts
+using DeviceModel   = SmartHomeApp.Models.Device;
+using GroupModel    = SmartHomeApp.Models.DeviceGroup;
+using ScheduleModel = SmartHomeApp.Models.DeviceSchedule;
 
 namespace SmartHomeApp.ViewModels
 {
     /// <summary>
-    /// Central view model providing collections and operations for devices,
-    /// groups, and schedules within the application.
+    /// Central ViewModel:
+    /// - Loads Devices, Groups, and Schedules from SQLite
+    /// - Exposes:
+    ///   * Devices (master list)
+    ///   * Groups  (rooms)
+    ///   * Lights, DoorLocks, Thermostats (filtered lists)
+    /// - Runs a UI-thread timer to apply schedules
     /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Collection of all device models for UI binding.
-        /// </summary>
-        public ObservableCollection<DeviceModel> Devices { get; } = new();
+        // --- Collections for data binding ---
+        public ObservableCollection<DeviceModel> Devices      { get; } = new();
+        public ObservableCollection<GroupModel>  Groups       { get; } = new();
+        public ObservableCollection<ScheduleModel> Schedules   { get; } = new();
 
-        /// <summary>
-        /// Collection of all device groups (rooms) for UI binding.
-        /// </summary>
-        public ObservableCollection<DeviceGroup> Groups { get; } = new();
+        // Filtered sub-lists for DevicePage accordions
+        public ObservableCollection<DeviceModel> Lights       { get; } = new();
+        public ObservableCollection<DeviceModel> DoorLocks    { get; } = new();
+        public ObservableCollection<DeviceModel> Thermostats  { get; } = new();
 
-        /// <summary>
-        /// Collection of all device schedules for UI binding.
-        /// </summary>
-        public ObservableCollection<DeviceSchedule> Schedules { get; } = new();
-
-        /// <summary>
-        /// Event raised when a property value changes, enabling UI updates.
-        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+        bool _timerRunning;
 
-        /// <summary>
-        /// Initializes data loading and schedule processing on creation.
-        /// </summary>
         public MainViewModel()
         {
-            LoadData();       // Populate collections from database
-            StartScheduler(); // Begin periodic schedule application
+            // Keep filtered lists in sync with Devices
+            Devices.CollectionChanged += OnDevicesCollectionChanged;
+            _ = InitializeAsync();
         }
 
         /// <summary>
-        /// Asynchronously loads device, group, and schedule data from the database,
-        /// clearing existing collections before adding fresh entries.
+        /// Initialize DB, load devices/groups/schedules, partition devices, start scheduler.
         /// </summary>
-        async void LoadData()
+        public async Task InitializeAsync()
         {
             await DatabaseService.InitializeAsync();
 
-            Devices.Clear();
-            foreach (var d in await DatabaseService.GetDevices())
-                Devices.Add(d);
-
-            Groups.Clear();
-            foreach (var g in await DatabaseService.GetDeviceGroups())
+            // Load Rooms
+            var roomList = await DatabaseService.GetDeviceGroups();
+            foreach (var g in roomList)
                 Groups.Add(g);
 
-            Schedules.Clear();
-            foreach (var s in await DatabaseService.GetSchedules())
+            // Load Devices
+            var deviceList = await DatabaseService.GetDevices();
+            foreach (var d in deviceList)
+                Devices.Add(d);
+
+            // Load Schedules
+            var schedList = await DatabaseService.GetSchedules();
+            foreach (var s in schedList)
                 Schedules.Add(s);
 
-            // Notify UI of collection updates
-            OnPropertyChanged(nameof(Devices));
-            OnPropertyChanged(nameof(Groups));
-            OnPropertyChanged(nameof(Schedules));
+            // Build filtered lists
+            PartitionDevices();
+
+            // Notify UI of initial load
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                OnPropertyChanged(nameof(Groups));
+                OnPropertyChanged(nameof(Devices));
+                OnPropertyChanged(nameof(Schedules));
+            });
+
+            StartScheduler();
         }
 
-        /// <summary>
-        /// Configures a timer to execute ApplySchedules every minute.
-        /// </summary>
+        // Rebuild filtered lists when Devices changes
+        void OnDevicesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            => PartitionDevices();
+
+        void PartitionDevices()
+        {
+            Lights.Clear();
+            DoorLocks.Clear();
+            Thermostats.Clear();
+
+            foreach (var d in Devices)
+            {
+                switch (d.Type?.Trim().ToLowerInvariant())
+                {
+                    case "light":
+                        Lights.Add(d);
+                        break;
+                    case "door lock":
+                        DoorLocks.Add(d);
+                        break;
+                    case "thermostat":
+                        Thermostats.Add(d);
+                        break;
+                }
+            }
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                OnPropertyChanged(nameof(Lights));
+                OnPropertyChanged(nameof(DoorLocks));
+                OnPropertyChanged(nameof(Thermostats));
+            });
+        }
+
         void StartScheduler()
         {
-            var timer = new System.Timers.Timer(60_000);  // Interval: 60 seconds
-            timer.Elapsed += async (_, _) => await ApplySchedules();
-            timer.Start();                                // Begin timer
+            if (_timerRunning) return;
+            _timerRunning = true;
+
+            Application.Current?.Dispatcher.StartTimer(
+                TimeSpan.FromMinutes(1),
+                () =>
+                {
+                    _ = ApplySchedulesAsync();
+                    return _timerRunning;
+                });
         }
 
-        /// <summary>
-        /// Applies active schedules to matching devices based on current time,
-        /// updating states and thermostat settings as configured.
-        /// </summary>
-        async Task ApplySchedules()
+        public void StopScheduler() => _timerRunning = false;
+
+        async Task ApplySchedulesAsync()
         {
             var now = DateTime.Now.TimeOfDay;
-            var dirty = false;  // Tracks whether device collection requires UI refresh
+            var dirty = false;
 
-            // Process each enabled schedule
             foreach (var sched in Schedules.Where(s => s.IsEnabled))
             {
                 foreach (var id in sched.DeviceIds)
                 {
-                    var dev = Devices.FirstOrDefault(d => d.Id == id);
-                    if (dev == null)
-                        continue;  // Skip missing devices
+                    var d = Devices.FirstOrDefault(x => x.Id == id);
+                    if (d == null) continue;
 
-                    // Handle thermostat schedules when DesiredTemp is set
                     if (sched.DesiredTemp.HasValue)
                     {
                         bool inWindow = now >= sched.OnTime && now < sched.OffTime;
-                        var target = inWindow
-                           ? sched.DesiredTemp.Value
-                           : (sched.OriginalTemp ?? dev.Temperature);
+                        int target = inWindow
+                            ? sched.DesiredTemp.Value
+                            : (sched.OriginalTemp ?? d.Temperature);
 
-                        if (dev.Temperature != target)
+                        if (d.Temperature != target)
                         {
-                            dev.Temperature = target;
-                            await DatabaseService.SaveDevice(dev);
+                            d.Temperature = target;
+                            await DatabaseService.SaveDevice(d);
                             dirty = true;
                         }
 
-                        // Manage OriginalTemp storage based on schedule window
                         if (inWindow && !sched.OriginalTemp.HasValue)
                         {
-                            sched.OriginalTemp = dev.Temperature;
+                            sched.OriginalTemp = d.Temperature;
                             await DatabaseService.SaveSchedule(sched);
                         }
                         else if (!inWindow && sched.OriginalTemp.HasValue)
@@ -130,53 +171,39 @@ namespace SmartHomeApp.ViewModels
                     }
                     else
                     {
-                        // Handle simple on/off schedules
                         bool shouldOn = now >= sched.OnTime && now < sched.OffTime;
-                        if (dev.IsOn != shouldOn)
+                        if (d.IsOn != shouldOn)
                         {
-                            dev.IsOn = shouldOn;
-                            await DatabaseService.SaveDevice(dev);
+                            d.IsOn = shouldOn;
+                            await DatabaseService.SaveDevice(d);
                             dirty = true;
                         }
                     }
                 }
             }
 
-            // Refresh device collection in UI if any changes occurred
             if (dirty)
-                OnPropertyChanged(nameof(Devices));
+                MainThread.BeginInvokeOnMainThread(() => OnPropertyChanged(nameof(Devices)));
         }
 
-        /// <summary>
-        /// Toggles power state for all devices matching the specified type.
-        /// </summary>
-        /// <param name="type">Device type to filter (case-insensitive).</param>
-        /// <param name="turnOn">Desired on/off state.</param>
         public async Task ToggleAllOfType(string type, bool turnOn)
         {
-            foreach (var d in Devices.Where(d => d.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
+            foreach (var d in Devices.Where(x =>
+                x.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
             {
                 d.IsOn = turnOn;
                 await DatabaseService.SaveDevice(d);
             }
-            OnPropertyChanged(nameof(Devices));  // Notify UI of bulk update
+            OnPropertyChanged(nameof(Devices));
         }
 
-        /// <summary>
-        /// Creates and persists a new schedule for a single device;
-        /// includes DesiredTemp only for thermostat devices.
-        /// </summary>
-        /// <param name="device">Device to schedule.</param>
-        /// <param name="on">Activation time of day.</param>
-        /// <param name="off">Deactivation time of day.</param>
-        /// <param name="desiredTemp">Optional thermostat temperature setting.</param>
         public async Task AddSchedule(
             DeviceModel device,
             TimeSpan on,
             TimeSpan off,
             int? desiredTemp = null)
         {
-            var sched = new DeviceSchedule
+            var sched = new ScheduleModel
             {
                 DeviceIds   = new List<int> { device.Id },
                 OnTime      = on,
@@ -189,10 +216,6 @@ namespace SmartHomeApp.ViewModels
             OnPropertyChanged(nameof(Schedules));
         }
 
-        /// <summary>
-        /// Removes a schedule by its identifier and updates UI.
-        /// </summary>
-        /// <param name="scheduleId">Identifier of the schedule to delete.</param>
         public async Task RemoveSchedule(int scheduleId)
         {
             var sched = Schedules.FirstOrDefault(s => s.Id == scheduleId);
@@ -204,10 +227,6 @@ namespace SmartHomeApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// Invokes PropertyChanged event for the specified property name.
-        /// </summary>
-        /// <param name="name">Name of the property that changed.</param>
         void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

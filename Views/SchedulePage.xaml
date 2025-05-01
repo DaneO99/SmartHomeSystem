@@ -1,90 +1,200 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-  SchedulePage.xaml: Page for creating and managing schedules
-  including on/off schedules for devices and listing existing schedules.
--->
 <ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
-    x:Class="SmartHomeApp.Views.SchedulePage"
-    Title="Schedules"
-    BackgroundColor="White">
+  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
+  xmlns:models="clr-namespace:SmartHomeApp.Models"
+  xmlns:converters="clr-namespace:SmartHomeApp.Converters"
+  x:Class="SmartHomeApp.Views.SchedulePage"
+  Title="Schedules"
+  BackgroundColor="White"
+  x:DataType="vm:MainViewModel">
 
-  <!-- Bind to MainViewModel; code-behind will assign actual instance -->
-  <ContentPage.BindingContext>
-    <vm:MainViewModel />
-  </ContentPage.BindingContext>
+  <ContentPage.Resources>
+    <!-- All buttons blue/white -->
+    <Style TargetType="Button">
+      <Setter Property="BackgroundColor" Value="Blue"/>
+      <Setter Property="TextColor" Value="White"/>
+      <Setter Property="CornerRadius" Value="8"/>
+    </Style>
+    <converters:DeviceIdsToNamesConverter x:Key="IdsToNames" />
+  </ContentPage.Resources>
 
-  <VerticalStackLayout Padding="20" Spacing="20">
+  <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="20">
 
-    <!-- Section: Create a new on/off schedule -->
-    <Label Text="Create On/Off Schedule"
-           FontSize="24"
-           TextColor="Black" />
+      <!-- Logo -->
+      <Image
+        Source="logo.png"
+        HeightRequest="60"
+        WidthRequest="60"
+        HorizontalOptions="Center" />
 
-    <!-- Picker to select a device for the schedule -->
-    <Picker
-      x:Name="DevicePicker"
-      Title="Select Device"
-      ItemsSource="{Binding Devices}"
-      ItemDisplayBinding="{Binding Name}" />
+      <!-- Form Title -->
+      <Label
+        x:Name="FormTitle"
+        Text="Create On/Off Schedule"
+        FontSize="24"
+        TextColor="Black" />
 
-    <!-- Time selection for start and end times -->
-    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-      <Label Text="Start:" VerticalOptions="Center" TextColor="Black" />
-      <TimePicker x:Name="OnTimePicker" Time="08:00:00" />
-      <Label Text="End:"   VerticalOptions="Center" TextColor="Black" />
-      <TimePicker x:Name="OffTimePicker" Time="20:00:00" />
-    </HorizontalStackLayout>
+      <!-- Schedule Name -->
+      <Entry
+        x:Name="ScheduleNameEntry"
+        Placeholder="Schedule Name"
+        HorizontalOptions="FillAndExpand" />
 
-    <!-- Button to save the new on/off schedule -->
-    <Button
-      Text="Save On/Off Schedule"
-      BackgroundColor="Blue"
-      TextColor="White"
-      Clicked="OnSaveScheduleClicked" />
+      <!-- Device selection using CheckBoxes -->
+      <Label Text="Select Devices" TextColor="Black"/>
+      <ScrollView HeightRequest="120">
+        <VerticalStackLayout
+          x:Name="DeviceSelectionLayout"
+          Spacing="5"
+          BindableLayout.ItemsSource="{Binding Devices}">
+          <BindableLayout.ItemTemplate>
+            <DataTemplate x:DataType="models:Device">
+              <HorizontalStackLayout Spacing="10">
+                <CheckBox
+                  CheckedChanged="OnDeviceCheckChanged"
+                  Color="Blue"
+                  VerticalOptions="Center"/>
+                <Label
+                  Text="{Binding Name}"
+                  VerticalOptions="Center"/>
+              </HorizontalStackLayout>
+            </DataTemplate>
+          </BindableLayout.ItemTemplate>
+        </VerticalStackLayout>
+      </ScrollView>
 
-    <!-- Placeholder for thermostat-specific scheduling UI -->
-    <Label Text="(Thermostat schedules go here…)"
-           FontAttributes="Italic"
-           TextColor="Gray"
-           IsVisible="False" />
+      <!-- On/Off Time Pickers -->
+      <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+        <Label Text="Start:" TextColor="Black" VerticalOptions="Center"/>
+        <TimePicker x:Name="OnTimePicker" Time="08:00:00"/>
+        <Label Text="End:" TextColor="Black" VerticalOptions="Center"/>
+        <TimePicker x:Name="OffTimePicker" Time="20:00:00"/>
+      </HorizontalStackLayout>
 
-    <!-- Section: Display existing schedules -->
-    <Label Text="Existing Schedules"
-           FontSize="20"
-           TextColor="Black" />
+      <!-- Desired Temp for thermostats -->
+      <Entry
+        x:Name="DesiredTempEntry"
+        Placeholder="Desired Temp (60–90°F)"
+        Keyboard="Numeric"
+        HorizontalOptions="FillAndExpand" />
 
-    <!-- List of current schedules with remove action -->
-    <CollectionView ItemsSource="{Binding Schedules}">
-      <CollectionView.ItemTemplate>
-        <DataTemplate>
-          <Frame Padding="10"
-                 Margin="0,5"
-                 BorderColor="LightGray"
-                 CornerRadius="8">
-            <HorizontalStackLayout Spacing="10">
-              <!-- Display the JSON of device IDs for clarity -->
-              <Label Text="{Binding DeviceIdsJson}"
-                     VerticalOptions="Center" />
-              <!-- Display start time formatted as HH:mm -->
-              <Label Text="{Binding OnTime, StringFormat='{0:hh\:mm}'}"
-                     VerticalOptions="Center" />
-              <!-- Display end time formatted as HH:mm -->
-              <Label Text="{Binding OffTime, StringFormat='{0:hh\:mm}'}"
-                     VerticalOptions="Center" />
-              <!-- Button to remove this schedule -->
-              <Button Text="Remove"
-                      BackgroundColor="Red"
-                      TextColor="White"
-                      CommandParameter="{Binding Id}"
-                      Clicked="OnRemoveScheduleClicked" />
-            </HorizontalStackLayout>
-          </Frame>
-        </DataTemplate>
-      </CollectionView.ItemTemplate>
-    </CollectionView>
+      <!-- Repeat days -->
+      <Label Text="Repeat On:" TextColor="Black"/>
+      <FlexLayout
+        Wrap="Wrap"
+        Direction="Row"
+        JustifyContent="Start"
+        AlignItems="Center">
+        <StackLayout Padding="5">
+          <Label Text="Sun" HorizontalOptions="Center"/>
+          <CheckBox x:Name="SundayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Mon" HorizontalOptions="Center"/>
+          <CheckBox x:Name="MondayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Tue" HorizontalOptions="Center"/>
+          <CheckBox x:Name="TuesdayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Wed" HorizontalOptions="Center"/>
+          <CheckBox x:Name="WednesdayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Thu" HorizontalOptions="Center"/>
+          <CheckBox x:Name="ThursdayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Fri" HorizontalOptions="Center"/>
+          <CheckBox x:Name="FridayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+        <StackLayout Padding="5">
+          <Label Text="Sat" HorizontalOptions="Center"/>
+          <CheckBox x:Name="SaturdayCheck" Color="Blue" HorizontalOptions="Center"/>
+        </StackLayout>
+      </FlexLayout>
 
-  </VerticalStackLayout>
+      <!-- Save / Update / Cancel -->
+      <HorizontalStackLayout Spacing="10">
+        <Button
+          x:Name="SaveScheduleButton"
+          Text="Save"
+          Clicked="OnSaveScheduleClicked"
+          HorizontalOptions="StartAndExpand"/>
+        <Button
+          x:Name="UpdateScheduleButton"
+          Text="Update"
+          Clicked="OnUpdateScheduleClicked"
+          IsVisible="False"
+          HorizontalOptions="StartAndExpand"/>
+        <Button
+          x:Name="CancelEditButton"
+          Text="Cancel"
+          Clicked="OnCancelEditClicked"
+          IsVisible="False"
+          HorizontalOptions="StartAndExpand"/>
+      </HorizontalStackLayout>
+
+      <!-- Existing schedules list -->
+      <Label Text="Existing Schedules" FontSize="20" TextColor="Black"/>
+      <CollectionView
+        x:Name="SchedulesCollectionView"
+        ItemsSource="{Binding Schedules}"
+        CanReorderItems="True"
+        RemainingItemsThreshold="1"
+        RemainingItemsThresholdReached="OnReorderCompleted">
+
+        <CollectionView.ItemTemplate>
+          <DataTemplate x:DataType="models:DeviceSchedule">
+            <Frame Padding="10" Margin="0,5" BorderColor="LightGray" CornerRadius="8">
+              <VerticalStackLayout Spacing="10">
+
+                <Label Text="{Binding Name}"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       TextColor="Black"/>
+
+                <Label Text="{Binding DeviceIdsJson, Converter={StaticResource IdsToNames}}"
+                       FontAttributes="Italic" />
+
+                <HorizontalStackLayout Spacing="10">
+                  <Label Text="Start:" VerticalOptions="Center"/>
+                  <Label Text="{Binding OnTime, StringFormat='{0:hh\\:mm}'}" VerticalOptions="Center"/>
+                  <Label Text="End:" VerticalOptions="Center"/>
+                  <Label Text="{Binding OffTime, StringFormat='{0:hh\\:mm}'}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <Label Text="Desired Temp:"
+                       IsVisible="{Binding DesiredTemp, Converter={StaticResource IdsToNames}, ConverterParameter=HasDesired}"
+                       TextColor="Black"/>
+                <Label Text="{Binding DesiredTemp, StringFormat='{0}°F'}"
+                       IsVisible="{Binding DesiredTemp, Converter={StaticResource IdsToNames}, ConverterParameter=HasDesired}"
+                       TextColor="Black"/>
+
+                <HorizontalStackLayout Spacing="10">
+                  <Button Text="Edit"
+                          Clicked="OnEditScheduleClicked"
+                          CommandParameter="{Binding Id}"
+                          HorizontalOptions="StartAndExpand"/>
+                  <Button Text="Remove"
+                          BackgroundColor="Red"
+                          TextColor="White"
+                          Clicked="OnRemoveScheduleClicked"
+                          CommandParameter="{Binding Id}"
+                          HorizontalOptions="End"/>
+                </HorizontalStackLayout>
+
+              </VerticalStackLayout>
+            </Frame>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+      </CollectionView>
+
+    </VerticalStackLayout>
+  </ScrollView>
 </ContentPage>

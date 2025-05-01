@@ -1,83 +1,73 @@
-// Namespace imports for navigation, UI controls, and graphics utilities
-using System;                                           
-using Microsoft.Maui.Controls;                          // Provides ContentPage and navigation
-using Microsoft.Maui.Graphics;                          // Provides Colors for UI element styling
-using SmartHomeApp.ViewModels;                          // Provides MainViewModel for data binding
+using System;
+using System.Linq;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using SmartHomeApp.ViewModels;
+using static SmartHomeApp.AppShell;
 
 namespace SmartHomeApp.Views
 {
-    /// <summary>
-    /// Code-behind for MainPage.xaml, managing navigation and quick-control actions.
-    /// </summary>
     public partial class MainPage : ContentPage
     {
-        // Stores current armed/disarmed state of the alarm system
         bool _alarmArmed = false;
+        MainViewModel Vm => AppViewModel;
 
-        /// <summary>
-        /// Initializes XAML-defined UI components.
-        /// </summary>
         public MainPage()
         {
-            InitializeComponent();  // Load controls and layout from XAML
+            InitializeComponent();
+            BindingContext = Vm;
         }
 
-        /// <summary>
-        /// Navigates to the device management page using existing ViewModel instance.
-        /// </summary>
         private async void GoToDevices(object sender, EventArgs e)
-        {
-            var vm = (MainViewModel)BindingContext!;
-            await Navigation.PushAsync(new DevicePage(vm));
-        }
+            => await Navigation.PushAsync(new DevicePage());
 
-        /// <summary>
-        /// Navigates to the room (group) management page using existing ViewModel instance.
-        /// </summary>
         private async void GoToRooms(object sender, EventArgs e)
-        {
-            var vm = (MainViewModel)BindingContext!;
-            await Navigation.PushAsync(new RoomPage(vm));
-        }
+            => await Navigation.PushAsync(new RoomPage());
 
-        /// <summary>
-        /// Navigates to the schedule management page using existing ViewModel instance.
-        /// </summary>
-        private async void GoToSchedules(object sender, EventArgs e)
-        {
-            var vm = (MainViewModel)BindingContext!;
-            await Navigation.PushAsync(new SchedulePage(vm));
-        }
+        private async void GoToScheduleList(object sender, EventArgs e)
+            => await Navigation.PushAsync(new ScheduleListPage());
 
-        /// <summary>
-        /// Toggles all lights on or off based on switch state.
-        /// </summary>
-        private async void OnLightsToggled(object sender, ToggledEventArgs e)
-        {
-            var vm = (MainViewModel)BindingContext!;
-            await vm.ToggleAllOfType("Light", e.Value);
-        }
-
-        /// <summary>
-        /// Toggles all door locks locked or unlocked based on switch state.
-        /// </summary>
-        private async void OnLocksToggled(object sender, ToggledEventArgs e)
-        {
-            var vm = (MainViewModel)BindingContext!;
-            await vm.ToggleAllOfType("Door Lock", e.Value);
-        }
-
-        /// <summary>
-        /// Arms or disarms the alarm system, updating button text and background color.
-        /// </summary>
         private void OnAlarmButtonClicked(object sender, EventArgs e)
         {
-            // Flip alarm armed state
             _alarmArmed = !_alarmArmed;
-            
-            // Update button label and color based on armed state
             AlarmButton.Text = _alarmArmed ? "Armed" : "Disarmed";
             AlarmButton.BackgroundColor = _alarmArmed ? Colors.Red : Colors.Blue;
+        }
+
+        private async void OnLightsToggledButton(object sender, EventArgs e)
+        {
+            bool anyOff = Vm.Devices.Any(d => d.Type.Equals("Light", StringComparison.OrdinalIgnoreCase) && !d.IsOn);
+            await Vm.ToggleAllOfType("Light", anyOff);
+            UpdateToggleStates();
+        }
+
+        private async void OnLocksToggledButton(object sender, EventArgs e)
+        {
+            bool anyOff = Vm.Devices.Any(d => d.Type.Equals("Door Lock", StringComparison.OrdinalIgnoreCase) && !d.IsOn);
+            await Vm.ToggleAllOfType("Door Lock", anyOff);
+            UpdateToggleStates();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            UpdateToggleStates();
+            UpdateCurrentTemp();
+        }
+
+        void UpdateToggleStates()
+        {
+            bool allLightsOn = Vm.Devices.Where(d => d.Type.Equals("Light", StringComparison.OrdinalIgnoreCase)).All(d => d.IsOn);
+            LightsToggleButton.BackgroundColor = allLightsOn ? Colors.Blue : Colors.LightGray;
+
+            bool allLocksOn = Vm.Devices.Where(d => d.Type.Equals("Door Lock", StringComparison.OrdinalIgnoreCase)).All(d => d.IsOn);
+            LocksToggleButton.BackgroundColor = allLocksOn ? Colors.Blue : Colors.LightGray;
+        }
+
+        void UpdateCurrentTemp()
+        {
+            var thermo = Vm.Devices.FirstOrDefault(d => d.Type.Equals("Thermostat", StringComparison.OrdinalIgnoreCase));
+            CurrentTempButton.Text = thermo != null ? $"Temp: {thermo.Temperature}°F" : "No Thermostat";
         }
     }
 }

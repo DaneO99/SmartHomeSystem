@@ -1,117 +1,99 @@
-// Namespace imports for UI controls, data binding, and model/service references
-using System;                                    // Provides basic system types
-using System.Linq;                               // Provides LINQ extension methods
-using System.Threading.Tasks;                    // Provides Task-based async functionality
-using Microsoft.Maui.Controls;                   // Provides MAUI UI elements
-using SmartHomeApp.Models;                       // Provides Device model
-using SmartHomeApp.Services;                     // Provides DatabaseService
-using SmartHomeApp.ViewModels;                   // Provides MainViewModel
-using DeviceModel = SmartHomeApp.Models.Device;  // Alias for Device model
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
+using SmartHomeApp.Services;
+using SmartHomeApp.ViewModels;       // For MainViewModel
+using static SmartHomeApp.AppShell;  // For AppViewModel
+using DeviceModel = SmartHomeApp.Models.Device;
 
 namespace SmartHomeApp.Views
 {
     /// <summary>
-    /// Code-behind for DevicePage.xaml, handling user interactions for device management.
+    /// Code‐behind for DevicePage.xaml.
+    /// Implements add/remove and animated thermostat updates.
     /// </summary>
     public partial class DevicePage : ContentPage
     {
-        // ViewModel instance providing device, group, and schedule data
-        readonly MainViewModel _vm;
+        // Shortcut to the shared ViewModel
+        MainViewModel Vm => AppViewModel;
 
-        /// <summary>
-        /// Default constructor instantiating a new ViewModel when navigation lacks an existing instance.
-        /// </summary>
         public DevicePage()
         {
-            InitializeComponent();             // Load XAML components
-            _vm = new MainViewModel();         // Create fresh ViewModel
-            BindingContext = _vm;              // Assign data context for bindings
+            InitializeComponent();
+            BindingContext = Vm;
         }
 
         /// <summary>
-        /// Constructor accepting an existing ViewModel instance for shared data context.
-        /// </summary>
-        /// <param name="vm">MainViewModel instance to bind to this page.</param>
-        public DevicePage(MainViewModel vm)
-        {
-            InitializeComponent();             // Load XAML components
-            _vm = vm;                          // Assign provided ViewModel
-            BindingContext = _vm;              // Assign data context for bindings
-        }
-
-        /// <summary>
-        /// Handles the Add Device button click event.
-        /// Validates input, creates a new device entry, persists it, and updates the collection.
+        /// Handler for the "+" button: adds a new device.
         /// </summary>
         private async void OnAddDeviceClicked(object sender, EventArgs e)
         {
-            var name = DeviceNameEntry.Text?.Trim();                      
-            var type = DeviceTypePicker.SelectedItem as string;           
+            var name = DeviceNameEntry.Text?.Trim();
+            var type = DeviceTypePicker.SelectedItem as string;
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(type))
-                return;  // Abort when name or type is missing
+                return;
 
             var device = new DeviceModel
             {
                 Name = name,
                 Type = type,
                 IsOn = false,
-                Temperature = 75                           // Default thermostat setting
+                Temperature = 75
             };
 
-            await DatabaseService.SaveDevice(device);  // Persist new device
-            _vm.Devices.Add(device);                   // Update UI collection
+            await DatabaseService.SaveDevice(device);
+            Vm.Devices.Add(device);
 
-            DeviceNameEntry.Text = string.Empty;      // Reset input field
-            DeviceTypePicker.SelectedIndex = -1;       // Reset picker selection
+            DeviceNameEntry.Text = "";
+            DeviceTypePicker.SelectedIndex = -1;
         }
 
         /// <summary>
-        /// Handles the Remove button click event for devices.
-        /// Deletes the selected device from the database and updates the collection.
+        /// Handler for the red "✕" button: removes the device.
         /// </summary>
         private async void OnRemoveDeviceClicked(object sender, EventArgs e)
         {
             if ((sender as Button)?.CommandParameter is not int id)
-                return;  // Abort when CommandParameter is invalid
+                return;
 
-            var device = _vm.Devices.FirstOrDefault(d => d.Id == id);
-            if (device == null)
-                return;  // Abort when device not found
+            var dev = Vm.Devices.FirstOrDefault(d => d.Id == id);
+            if (dev == null) return;
 
-            await DatabaseService.DeleteDevice(device);  // Remove from database
-            _vm.Devices.Remove(device);                 // Remove from UI collection
+            await DatabaseService.DeleteDevice(dev);
+            Vm.Devices.Remove(dev);
         }
 
         /// <summary>
-        /// Handles the Set button click event for thermostat temperature adjustment.
-        /// Animates temperature change stepwise, clamps input, and persists the final value.
+        /// Handler for the "Set" button in the thermostat expander:
+        /// animates the label from current to target one degree at a time.
         /// </summary>
         private async void OnSetTempClicked(object sender, EventArgs e)
         {
             if (sender is Button btn && btn.BindingContext is DeviceModel dev)
             {
-                // Locate the adjacent Entry control within the layout
-                if (btn.Parent is HorizontalStackLayout horiz &&
-                    horiz.Children.OfType<Entry>().FirstOrDefault() is Entry entry &&
-                    int.TryParse(entry.Text, out var target))
+                // Find the Entry next to this button
+                if (btn.Parent is HorizontalStackLayout layout &&
+                    layout.Children.OfType<Entry>().FirstOrDefault() is Entry entry &&
+                    int.TryParse(entry.Text, out var rawTarget))
                 {
-                    target = Math.Clamp(target, 50, 90);  // Constrain temperature range
+                    // Clamp user input to [60, 90]
+                    var target = Math.Clamp(rawTarget, 60, 90);
 
-                    var old = dev.Temperature;
-                    if (old != target)
+                    // Animate label (bound to dev.Temperature)
+                    var current = dev.Temperature;
+                    if (current != target)
                     {
-                        var step = target > old ? 1 : -1;
-                        // Animate temperature adjustment in increments
-                        for (var t = old; t != target; t += step)
+                        var step = target > current ? 1 : -1;
+                        for (var t = current; t != target; t += step)
                         {
                             dev.Temperature = t + step;
-                            await Task.Delay(200);          // Pause for animation effect
+                            await Task.Delay(200);  // pause for counter effect
                         }
                     }
 
-                    dev.Temperature = target;
-                    entry.Text = target.ToString();      // Reflect final value in input
-                    await DatabaseService.SaveDevice(dev);  // Persist updated thermostat setting
+                    // Persist the final temperature
+                    await DatabaseService.SaveDevice(dev);
                 }
             }
         }

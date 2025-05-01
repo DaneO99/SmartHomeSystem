@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  AppShell.xaml: Defines application shell with flyout menu items for navigation
-  and a logout action at the bottom.
+  AppShell.xaml: Defines the application shell (flyout menu) and binds to
+  the single shared MainViewModel (AppShell.AppViewModel).
 -->
 <Shell
     x:Class="SmartHomeApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SmartHomeApp"
     xmlns:views="clr-namespace:SmartHomeApp.Views;assembly=SmartHomeApp"
-    Title="SmartHomeApp">
+    Title="SmartHomeApp"
+    BindingContext="{x:Static local:AppShell.AppViewModel}">
 
-  <!-- Flyout menu: Dashboard navigation -->
+  <!-- Dashboard -->
   <FlyoutItem Title="Dashboard">
     <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
   </FlyoutItem>
 
-  <!-- Flyout menu: Navigate to Devices page -->
+  <!-- Devices -->
   <FlyoutItem Title="Devices">
     <ShellContent ContentTemplate="{DataTemplate views:DevicePage}" />
   </FlyoutItem>
 
-  <!-- Flyout menu: Navigate to Rooms page -->
+  <!-- Rooms -->
   <FlyoutItem Title="Rooms">
     <ShellContent ContentTemplate="{DataTemplate views:RoomPage}" />
   </FlyoutItem>
 
-  <!-- Flyout menu: Navigate to Schedules page -->
+  <!-- Schedules -->
   <FlyoutItem Title="Schedules">
     <ShellContent ContentTemplate="{DataTemplate views:SchedulePage}" />
   </FlyoutItem>
 
-  <!-- Logout action placed at the bottom of the flyout menu -->
+  <!-- Logout at bottom of flyout -->
   <MenuItem
     Text="Logout"
     Clicked="OnLogoutClicked" />
-
 </Shell>

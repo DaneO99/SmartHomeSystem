@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-  RoomPage.xaml: Page for managing room groups, assigning devices to rooms,
-  and controlling device state within each room.
+  RoomPage: manage rooms, assign/unassign devices, and control devices per room.
+  BindingContext inherited from AppShell.AppViewModel.
 -->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -13,82 +13,51 @@
     BackgroundColor="White"
     x:DataType="vm:MainViewModel">
 
-  <!-- Resource definitions for accent color and shared button style -->
   <ContentPage.Resources>
-    <ResourceDictionary>
-      <!-- Accent color used for controls such as Switch toggles -->
-      <Color x:Key="Accent">Blue</Color>
-      <!-- Default button style: accent background with white text -->
-      <Style TargetType="Button">
-        <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-        <Setter Property="TextColor" Value="White" />
-      </Style>
-    </ResourceDictionary>
+    <Color x:Key="Accent">Blue</Color>
+    <Style TargetType="Button">
+      <Setter Property="BackgroundColor" Value="{StaticResource Accent}"/>
+      <Setter Property="TextColor" Value="White"/>
+    </Style>
   </ContentPage.Resources>
 
-  <!-- Scrollable container to host varying content height -->
   <ScrollView>
     <VerticalStackLayout Padding="20" Spacing="20">
 
-      <!-- Page header label -->
-      <Label Text="Your Rooms"
-             FontSize="24"
-             TextColor="Black" />
+      <Label Text="Your Rooms" FontSize="24" TextColor="Black"/>
 
-      <!-- Section: Add a new room -->
       <HorizontalStackLayout Spacing="10">
-        <!-- Entry for entering room name -->
         <Entry x:Name="NewRoomEntry"
                Placeholder="Enter new room name"
-               TextColor="Black" />
-        <!-- Button to add room using code-behind handler -->
+               TextColor="Black"/>
         <Button Text="Add Room"
-                Clicked="OnAddRoomClicked" />
+                Clicked="OnAddRoomClicked"/>
       </HorizontalStackLayout>
 
-      <!-- Section: List of existing rooms -->
       <CollectionView ItemsSource="{Binding Groups}">
         <CollectionView.ItemTemplate>
-          <!-- Template typed to DeviceGroup model -->
           <DataTemplate x:DataType="models:DeviceGroup">
-            <!-- Border provides container styling for each group -->
-            <Border
-              Stroke="#D0D0D0"
-              StrokeThickness="1"
-              Padding="10"
-              BackgroundColor="#F0F0F0">
+            <Border Stroke="#D0D0D0" StrokeThickness="1" Padding="10" BackgroundColor="#F0F0F0">
               <Border.StrokeShape>
-                <RoundRectangle CornerRadius="8" />
+                <RoundRectangle CornerRadius="8"/>
               </Border.StrokeShape>
 
               <VerticalStackLayout Spacing="10">
-
-                <!-- Room header row: name and remove button -->
                 <HorizontalStackLayout Spacing="10">
-                  <Label Text="{Binding GroupName}"
-                         FontSize="20"
-                         VerticalOptions="Center"
-                         TextColor="Black" />
+                  <Label Text="{Binding GroupName}" FontSize="20" TextColor="Black"/>
                   <Button Text="Remove Room"
                           BackgroundColor="Red"
                           Clicked="OnRemoveRoomClicked"
-                          CommandParameter="{Binding Id}" />
+                          CommandParameter="{Binding Id}"/>
                 </HorizontalStackLayout>
 
-                <!-- Nested list: devices assigned to this room -->
                 <CollectionView ItemsSource="{Binding DevicesInGroup}">
                   <CollectionView.ItemTemplate>
-                    <!-- Template typed to Device model -->
                     <DataTemplate x:DataType="models:Device">
                       <VerticalStackLayout Spacing="5" Padding="5">
-
-                        <!-- Device row: name, on/off switch, remove-from-room -->
                         <HorizontalStackLayout Spacing="10">
-                          <Label Text="{Binding Name}"
-                                 VerticalOptions="Center"
-                                 TextColor="Black" />
+                          <Label Text="{Binding Name}" TextColor="Black"/>
 
-                          <!-- Switch visible for non-thermostat types -->
                           <Switch IsToggled="{Binding IsOn}"
                                   OnColor="{StaticResource Accent}"
                                   ThumbColor="White"
@@ -97,83 +66,69 @@
                               <DataTrigger TargetType="Switch"
                                            Binding="{Binding Type}"
                                            Value="Thermostat">
-                                <Setter Property="IsVisible" Value="False" />
+                                <Setter Property="IsVisible" Value="False"/>
                               </DataTrigger>
                             </Switch.Triggers>
                           </Switch>
 
-                          <!-- Button to remove device from current room -->
                           <Button Text="Remove"
                                   BackgroundColor="Red"
                                   Clicked="OnRemoveDeviceFromRoomClicked"
-                                  CommandParameter="{Binding Id}" />
+                                  CommandParameter="{Binding Id}"/>
                         </HorizontalStackLayout>
 
-                        <!-- Thermostat controls shown only for thermostat type -->
                         <VerticalStackLayout>
                           <VerticalStackLayout.Triggers>
                             <DataTrigger TargetType="VerticalStackLayout"
                                          Binding="{Binding Type}"
                                          Value="Thermostat">
-                              <Setter Property="IsVisible" Value="True" />
+                              <Setter Property="IsVisible" Value="True"/>
                             </DataTrigger>
-                            <!-- Hide for other types -->
                             <DataTrigger TargetType="VerticalStackLayout"
                                          Binding="{Binding Type}"
                                          Value="Light">
-                              <Setter Property="IsVisible" Value="False" />
+                              <Setter Property="IsVisible" Value="False"/>
                             </DataTrigger>
                             <DataTrigger TargetType="VerticalStackLayout"
                                          Binding="{Binding Type}"
                                          Value="Door Lock">
-                              <Setter Property="IsVisible" Value="False" />
+                              <Setter Property="IsVisible" Value="False"/>
                             </DataTrigger>
                           </VerticalStackLayout.Triggers>
 
-                          <!-- Display temperature reading -->
                           <Label Text="{Binding Temperature, StringFormat='Temp: {0}°F'}"
-                                 TextColor="Black" />
+                                 TextColor="Black"/>
 
-                          <!-- Entry and button for setting new temperature -->
                           <HorizontalStackLayout Spacing="10">
                             <Entry WidthRequest="60"
                                    Keyboard="Numeric"
-                                   Placeholder="50–90"
-                                   x:Name="RoomTempEntry" />
+                                   Placeholder="50–90"/>
                             <Button Text="Set"
-                                    Clicked="OnRoomSetTempClicked" />
+                                    Clicked="OnRoomSetTempClicked"/>
                           </HorizontalStackLayout>
                         </VerticalStackLayout>
-
                       </VerticalStackLayout>
                     </DataTemplate>
                   </CollectionView.ItemTemplate>
                 </CollectionView>
-
               </VerticalStackLayout>
             </Border>
           </DataTemplate>
         </CollectionView.ItemTemplate>
       </CollectionView>
 
-      <!-- Section: Assign a device to a room -->
-      <Label Text="Assign Device"
-             FontSize="20"
-             TextColor="Black" />
+      <Label Text="Assign Device" FontSize="20" TextColor="Black"/>
       <HorizontalStackLayout Spacing="10">
-        <!-- Picker for selecting a device by name -->
         <Picker x:Name="DevicePicker"
                 Title="Device"
                 ItemsSource="{Binding Devices}"
-                ItemDisplayBinding="{Binding Name}" />
-        <!-- Picker for selecting a room by group name -->
+                ItemDisplayBinding="{Binding Name}"/>
         <Picker x:Name="RoomPicker"
                 Title="Room"
                 ItemsSource="{Binding Groups}"
-                ItemDisplayBinding="{Binding GroupName}" />
-        <!-- Button to assign selected device to selected room -->
+                ItemDisplayBinding="{Binding GroupName}"/>
         <Button Text="Assign"
-                Clicked="OnAssignDeviceClicked" />
+                Clicked="OnAssignDeviceClicked"/>
       </HorizontalStackLayout>
 
     </VerticalStackLayout>

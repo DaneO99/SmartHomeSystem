@@ -46,7 +46,7 @@
         TextColor="Black" />
     </HorizontalStackLayout>
 
-    <!-- Button to initiate login process -->
+    <!--  Button to initiate login process -->
     <Button
       Text="Login"
       Clicked="OnLoginClicked"

@@ -66,6 +66,12 @@ build_metadata.AdditionalFiles.ManifestResourceName = SmartHomeApp.Views.RoomPag
 build_metadata.AdditionalFiles.TargetPath = Views/RoomPage.xaml
 build_metadata.AdditionalFiles.RelativePath = Views/RoomPage.xaml
 
+[/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/Views/ScheduleList.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = SmartHomeApp.Views.ScheduleList.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/ScheduleList.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/ScheduleList.xaml
+
 [/Users/danefitzgerald/Desktop/SmartHomeApp/SmartHomeApp/Views/SchedulePage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = SmartHomeApp.Views.SchedulePage.xaml

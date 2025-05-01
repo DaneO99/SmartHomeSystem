@@ -1,96 +1,96 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-  MainPage.xaml: Dashboard for SmartHomeApp displaying summary counts,
-  navigation buttons, and quick toggles for lights, locks, and alarm state.
--->
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:SmartHomeApp.ViewModels"
     x:Class="SmartHomeApp.Views.MainPage"
     Title="Smart Home Dashboard"
+    BackgroundColor="White"
     x:DataType="vm:MainViewModel">
 
-  <!-- Bind the page to MainViewModel for property binding -->
-  <ContentPage.BindingContext>
-    <vm:MainViewModel />
-  </ContentPage.BindingContext>
+  <Grid Padding="20"
+        RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+        ColumnDefinitions="*"
+        RowSpacing="20">
 
-  <!-- Vertical layout container with padding and spacing -->
-  <VerticalStackLayout
-      Padding="30"
-      Spacing="20">
+    <!-- Logo -->
+    <Image Grid.Row="0"
+           Source="logo.png"
+           HeightRequest="60"
+           WidthRequest="60"
+           HorizontalOptions="Center" />
 
-    <!-- Dashboard header -->
-    <Label
-      Text="Welcome to SmartHome"
-      FontSize="24"
-      HorizontalOptions="Center"
-      TextColor="Black" />
+    <!-- Devices & Rooms -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="20">
+      <Button Text="{Binding Devices.Count, StringFormat='Devices ({0})'}"
+              Clicked="GoToDevices"
+              BackgroundColor="Blue"
+              TextColor="White"
+              FontSize="18"
+              CornerRadius="8"
+              HeightRequest="80"/>
+      <Button Grid.Column="1"
+              Text="{Binding Groups.Count, StringFormat='Rooms ({0})'}"
+              Clicked="GoToRooms"
+              BackgroundColor="Blue"
+              TextColor="White"
+              FontSize="18"
+              CornerRadius="8"
+              HeightRequest="80"/>
+    </Grid>
 
-    <!-- Navigation button to Devices page showing device count -->
-    <Button
-      Text="{Binding Devices.Count, StringFormat='Devices ({0})'}"
-      Clicked="GoToDevices"
-      BackgroundColor="Blue"
-      TextColor="White"
-      FontSize="18" />
+    <!-- Alarm -->
+    <Button Grid.Row="2"
+            x:Name="AlarmButton"
+            Text="Disarmed"
+            Clicked="OnAlarmButtonClicked"
+            BackgroundColor="Blue"
+            TextColor="White"
+            FontSize="18"
+            CornerRadius="8"
+            HeightRequest="60"/>
 
-    <!-- Navigation button to Rooms (Groups) page showing room count -->
-    <Button
-      Text="{Binding Groups.Count, StringFormat='Rooms ({0})'}"
-      Clicked="GoToRooms"
-      BackgroundColor="Blue"
-      TextColor="White"
-      FontSize="18" />
+    <!-- Lights & Locks -->
+    <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="20">
+      <Button x:Name="LightsToggleButton"
+              Text="All Lights"
+              Clicked="OnLightsToggledButton"
+              BackgroundColor="LightGray"
+              TextColor="Black"
+              FontSize="18"
+              CornerRadius="8"
+              HeightRequest="80"/>
+      <Button Grid.Column="1"
+              x:Name="LocksToggleButton"
+              Text="All Locks"
+              Clicked="OnLocksToggledButton"
+              BackgroundColor="LightGray"
+              TextColor="Black"
+              FontSize="18"
+              CornerRadius="8"
+              HeightRequest="80"/>
+    </Grid>
 
-    <!-- Navigation button to Schedules page -->
-    <Button
-      Text="Schedules"
-      Clicked="GoToSchedules"
-      BackgroundColor="Blue"
-      TextColor="White"
-      FontSize="18" />
+    <!-- Current Temp -->
+    <Button Grid.Row="4"
+            x:Name="CurrentTempButton"
+            Text="Temp: --°F"
+            IsEnabled="False"
+            BackgroundColor="LightGray"
+            TextColor="Black"
+            FontSize="18"
+            CornerRadius="8"
+            HeightRequest="60"/>
 
-    <!-- Toggle control for turning all lights on/off -->
-    <HorizontalStackLayout
-        Spacing="10"
-        VerticalOptions="Center">
-      <Label
-        Text="All Lights"
-        VerticalOptions="Center"
-        TextColor="Black"
-        FontSize="18" />
-      <Switch
-        Toggled="OnLightsToggled"
-        OnColor="Blue"
-        ThumbColor="White" />
-    </HorizontalStackLayout>
-
-    <!-- Toggle control for locking/unlocking all door locks -->
-    <HorizontalStackLayout
-        Spacing="10"
-        VerticalOptions="Center">
-      <Label
-        Text="All Door Locks"
-        VerticalOptions="Center"
-        TextColor="Black"
-        FontSize="18" />
-      <Switch
-        Toggled="OnLocksToggled"
-        OnColor="Blue"
-        ThumbColor="White" />
-    </HorizontalStackLayout>
-
-    <!-- Button for arming/disarming the alarm system -->
-    <Button
-      x:Name="AlarmButton"
-      Text="Disarmed"
-      BackgroundColor="Blue"
-      TextColor="White"
-      Clicked="OnAlarmButtonClicked"
-      FontSize="18"
-      HorizontalOptions="FillAndExpand" />
-
-  </VerticalStackLayout>
+    <!-- Schedule List Button -->
+    <Button Grid.Row="5"
+            Text="View Schedules"
+            Clicked="GoToScheduleList"
+            BackgroundColor="Blue"
+            TextColor="White"
+            FontSize="18"
+            CornerRadius="8"
+            HeightRequest="60"
+            HorizontalOptions="FillAndExpand"/>
+  </Grid>
 </ContentPage>
