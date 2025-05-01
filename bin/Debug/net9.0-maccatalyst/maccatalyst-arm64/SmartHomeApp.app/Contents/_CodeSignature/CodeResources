@@ -16,10 +16,6 @@
 		<data>
 		a4931LwQWyxJVaXHNKKnIVb5aLM=
 		</data>
-		<key>Resources/MauiInfo.plist</key>
-		<data>
-		4jZ/pOJGXwmAFXCgk7LRa9BJH58=
-		</data>
 		<key>Resources/MonoTouchDebugConfiguration.txt</key>
 		<data>
 		oowkf1sL6T19nanXUObgmuayWqM=
@@ -36,6 +32,10 @@
 		<data>
 		4FwlbE+v2+sN4dXTFzGzqkLgd+w=
 		</data>
+		<key>Resources/devicelogo.png</key>
+		<data>
+		/egGdhqzhauafehnsNZopXV5/NQ=
+		</data>
 		<key>Resources/dotnet_bot.png</key>
 		<data>
 		TCPYt8l244J9a2sCFwVUdoBhDdA=
@@ -47,6 +47,26 @@
 		<key>Resources/dotnet_bot@3x.png</key>
 		<data>
 		km7arW01LDKD2LzrEduLpKYf69k=
+		</data>
+		<key>Resources/homelogo.png</key>
+		<data>
+		SbWc1oiBZ5dtojtkV29fZclu53s=
+		</data>
+		<key>Resources/locklogo.png</key>
+		<data>
+		B6K7CrSMxckuqyFmleTBsj7J5PQ=
+		</data>
+		<key>Resources/logo.png</key>
+		<data>
+		NY+6myfQ3E7hJKOc/2dQylJuLyo=
+		</data>
+		<key>Resources/roomlogo.png</key>
+		<data>
+		5xRLhjRhqiWXggf5ETkxrsuzbc8=
+		</data>
+		<key>Resources/schedulelogo.png</key>
+		<data>
+		DBxKL4yQBPo+CNy/b0PVcKTa3yw=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -244,14 +264,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			lXLhrsOqQytwNQc5vOVEEPsbx6MQ7Zl7VluN9j3UwzI=
+			MzKsoZkOnH0nIV4LBBZnXFdSnrXd0937QEYjzGkxnNI=
 			</data>
 		</dict>
 		<key>MonoBundle/SmartHomeApp.pdb</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			WNktyU8fK6YlcEoaR1Vpmbf8P0G4gT0UrxHu6SPm9nM=
+			ClFuQXY+TPadDV/WhemkZbMmbgkO67CuK6MVq6lFaUs=
 			</data>
 		</dict>
 		<key>MonoBundle/System.AppContext.dll</key>
@@ -1682,13 +1702,6 @@
 			tHXIdQgmdh0ic/kPFTzldeIcUsxkJWK7CK5Af9xgNWM=
 			</data>
 		</dict>
-		<key>Resources/MauiInfo.plist</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			D7xF2d/FAU0oXTW+VlzYG1hotU4XDYbby3Tmkh09oro=
-			</data>
-		</dict>
 		<key>Resources/MonoTouchDebugConfiguration.txt</key>
 		<dict>
 			<key>hash2</key>
@@ -1717,6 +1730,13 @@
 			Xs1Lxvm9EPQHYXzHq6pos6McP48WATdCKhDkCPidQ+g=
 			</data>
 		</dict>
+		<key>Resources/devicelogo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hkvOfK1HZXIVxzTI8JnpBoHkO2Btn4QKkD9TRZzju+4=
+			</data>
+		</dict>
 		<key>Resources/dotnet_bot.png</key>
 		<dict>
 			<key>hash2</key>
@@ -1736,6 +1756,41 @@
 			<key>hash2</key>
 			<data>
 			a/Og/prhaP+ksiVrPdm6zyz46YfBdrD0oFdkAveKI18=
+			</data>
+		</dict>
+		<key>Resources/homelogo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nHNyxxqvlVKQ1chnaoMRUJ2QSiEqeETx1aHrutL1I0o=
+			</data>
+		</dict>
+		<key>Resources/locklogo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			81ZIywhwY7bG6EMeWJD3tVdTnceTA00t8rQa2f4zYhM=
+			</data>
+		</dict>
+		<key>Resources/logo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nNUjdroqxLEKQAsIde1icQ4VlDFP07HQkjFeAM/PC54=
+			</data>
+		</dict>
+		<key>Resources/roomlogo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bzJKCEIroLJ1TDhXfk4xUJyCkiSGdHiRdLZj8wHlVfs=
+			</data>
+		</dict>
+		<key>Resources/schedulelogo.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5JjxoHUHB9fReCDwZLf+j8EH19PZgfDIqkT6JMxsulg=
 			</data>
 		</dict>
 	</dict>

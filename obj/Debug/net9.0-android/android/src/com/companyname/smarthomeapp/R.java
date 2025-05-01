@@ -11897,10 +11897,9 @@ public final class R {
     public static final int notify_panel_notification_icon_bg=0x7f0700e7;
     public static final int roomlogo=0x7f0700e8;
     public static final int schedulelogo=0x7f0700e9;
-    public static final int splash=0x7f0700ea;
-    public static final int test_level_drawable=0x7f0700eb;
-    public static final int tooltip_frame_dark=0x7f0700ec;
-    public static final int tooltip_frame_light=0x7f0700ed;
+    public static final int test_level_drawable=0x7f0700ea;
+    public static final int tooltip_frame_dark=0x7f0700eb;
+    public static final int tooltip_frame_light=0x7f0700ec;
   }
   public static final class id {
     public static final int ALT=0x7f080000;
