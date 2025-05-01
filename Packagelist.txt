@@ -1,0 +1,188 @@
+Project 'SmartHomeApp' has the following package references
+   [net9.0-android35.0]: 
+   Top-level Package                            Requested   Resolved
+   > CommunityToolkit.Maui                      11.2.0      11.2.0  
+   > Microsoft.Extensions.Logging.Debug         9.0.0       9.0.0   
+   > Microsoft.Maui.Controls                    9.0.50      9.0.50  
+   > Microsoft.NET.ILLink.Tasks           (A)   [9.0.3, )   9.0.3   
+   > sqlite-net-pcl                             1.9.172     1.9.172 
+
+   Transitive Package                                           Resolved       
+   > CommunityToolkit.Maui.Core                                 11.2.0         
+   > GoogleGson                                                 2.11.0.5       
+   > Microsoft.Extensions.Configuration                         9.0.0          
+   > Microsoft.Extensions.Configuration.Abstractions            9.0.0          
+   > Microsoft.Extensions.DependencyInjection                   9.0.0          
+   > Microsoft.Extensions.DependencyInjection.Abstractions      9.0.0          
+   > Microsoft.Extensions.Logging                               9.0.0          
+   > Microsoft.Extensions.Logging.Abstractions                  9.0.0          
+   > Microsoft.Extensions.Options                               9.0.0          
+   > Microsoft.Extensions.Primitives                            9.0.0          
+   > Microsoft.Maui.Controls.Build.Tasks                        9.0.50         
+   > Microsoft.Maui.Controls.Core                               9.0.50         
+   > Microsoft.Maui.Controls.Xaml                               9.0.50         
+   > Microsoft.Maui.Core                                        9.0.50         
+   > Microsoft.Maui.Essentials                                  9.0.50         
+   > Microsoft.Maui.Graphics                                    9.0.50         
+   > Microsoft.Maui.Resizetizer                                 9.0.50         
+   > SQLitePCLRaw.bundle_green                                  2.1.2          
+   > SQLitePCLRaw.core                                          2.1.2          
+   > SQLitePCLRaw.lib.e_sqlite3.android                         2.1.2          
+   > SQLitePCLRaw.provider.e_sqlite3                            2.1.2          
+   > System.Buffers                                             4.4.0          
+   > System.Memory                                              4.5.3          
+   > System.Runtime.CompilerServices.Unsafe                     4.5.2          
+   > Xamarin.Android.Glide                                      4.16.0.11      
+   > Xamarin.Android.Glide.Annotations                          4.16.0.11      
+   > Xamarin.Android.Glide.DiskLruCache                         4.16.0.11      
+   > Xamarin.Android.Glide.GifDecoder                           4.16.0.11      
+   > Xamarin.AndroidX.Activity                                  1.9.3.2        
+   > Xamarin.AndroidX.Activity.Ktx                              1.9.3.2        
+   > Xamarin.AndroidX.Annotation                                1.9.1.2        
+   > Xamarin.AndroidX.Annotation.Experimental                   1.4.1.8        
+   > Xamarin.AndroidX.Annotation.Jvm                            1.9.1.2        
+   > Xamarin.AndroidX.AppCompat                                 1.7.0.5        
+   > Xamarin.AndroidX.AppCompat.AppCompatResources              1.7.0.5        
+   > Xamarin.AndroidX.Arch.Core.Common                          2.2.0.15       
+   > Xamarin.AndroidX.Arch.Core.Runtime                         2.2.0.15       
+   > Xamarin.AndroidX.Browser                                   1.8.0.8        
+   > Xamarin.AndroidX.CardView                                  1.0.0.33       
+   > Xamarin.AndroidX.Collection                                1.4.5.2        
+   > Xamarin.AndroidX.Collection.Jvm                            1.4.5.2        
+   > Xamarin.AndroidX.Collection.Ktx                            1.4.5.2        
+   > Xamarin.AndroidX.Concurrent.Futures                        1.2.0.5        
+   > Xamarin.AndroidX.ConstraintLayout                          2.2.0.2        
+   > Xamarin.AndroidX.ConstraintLayout.Core                     1.1.0.2        
+   > Xamarin.AndroidX.CoordinatorLayout                         1.2.0.19       
+   > Xamarin.AndroidX.Core                                      1.15.0.2       
+   > Xamarin.AndroidX.Core.Core.Ktx                             1.15.0.2       
+   > Xamarin.AndroidX.CursorAdapter                             1.0.0.31       
+   > Xamarin.AndroidX.CustomView                                1.1.0.30       
+   > Xamarin.AndroidX.CustomView.PoolingContainer               1.0.0.17       
+   > Xamarin.AndroidX.DocumentFile                              1.0.1.31       
+   > Xamarin.AndroidX.DrawerLayout                              1.2.0.15       
+   > Xamarin.AndroidX.DynamicAnimation                          1.0.0.31       
+   > Xamarin.AndroidX.Emoji2                                    1.5.0.3        
+   > Xamarin.AndroidX.Emoji2.ViewsHelper                        1.5.0.3        
+   > Xamarin.AndroidX.ExifInterface                             1.3.7.9        
+   > Xamarin.AndroidX.Fragment                                  1.8.5.2        
+   > Xamarin.AndroidX.Fragment.Ktx                              1.8.5.2        
+   > Xamarin.AndroidX.Interpolator                              1.0.0.31       
+   > Xamarin.AndroidX.Legacy.Support.Core.Utils                 1.0.0.31       
+   > Xamarin.AndroidX.Lifecycle.Common                          2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Common.Jvm                      2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.LiveData                        2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.LiveData.Core                   2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx               2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Process                         2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Runtime                         2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Runtime.Android                 2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Runtime.Ktx                     2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.Runtime.Ktx.Android             2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.ViewModel                       2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.ViewModel.Android               2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.ViewModel.Ktx                   2.8.7.2        
+   > Xamarin.AndroidX.Lifecycle.ViewModelSavedState             2.8.7.2        
+   > Xamarin.AndroidX.Loader                                    1.1.0.31       
+   > Xamarin.AndroidX.LocalBroadcastManager                     1.1.0.19       
+   > Xamarin.AndroidX.Navigation.Common                         2.8.5.1        
+   > Xamarin.AndroidX.Navigation.Fragment                       2.8.5.1        
+   > Xamarin.AndroidX.Navigation.Runtime                        2.8.5.1        
+   > Xamarin.AndroidX.Navigation.UI                             2.8.5.1        
+   > Xamarin.AndroidX.Print                                     1.0.0.31       
+   > Xamarin.AndroidX.ProfileInstaller.ProfileInstaller         1.4.1.2        
+   > Xamarin.AndroidX.RecyclerView                              1.3.2.10       
+   > Xamarin.AndroidX.ResourceInspection.Annotation             1.0.1.19       
+   > Xamarin.AndroidX.SavedState                                1.2.1.15       
+   > Xamarin.AndroidX.SavedState.SavedState.Ktx                 1.2.1.15       
+   > Xamarin.AndroidX.Security.SecurityCrypto                   1.1.0.2-alpha06
+   > Xamarin.AndroidX.SlidingPaneLayout                         1.2.0.19       
+   > Xamarin.AndroidX.Startup.StartupRuntime                    1.2.0.2        
+   > Xamarin.AndroidX.SwipeRefreshLayout                        1.1.0.24       
+   > Xamarin.AndroidX.Tracing.Tracing                           1.2.0.9        
+   > Xamarin.AndroidX.Transition                                1.5.1.4        
+   > Xamarin.AndroidX.VectorDrawable                            1.2.0.5        
+   > Xamarin.AndroidX.VectorDrawable.Animated                   1.2.0.5        
+   > Xamarin.AndroidX.VersionedParcelable                       1.2.0.9        
+   > Xamarin.AndroidX.ViewPager                                 1.1.0.1        
+   > Xamarin.AndroidX.ViewPager2                                1.1.0.5        
+   > Xamarin.AndroidX.Window                                    1.3.0.5        
+   > Xamarin.AndroidX.Window.Extensions.Core.Core               1.0.0.13       
+   > Xamarin.Google.Android.Material                            1.12.0.2       
+   > Xamarin.Google.Code.FindBugs.JSR305                        3.0.2.18       
+   > Xamarin.Google.Crypto.Tink.Android                         1.16.0.1       
+   > Xamarin.Google.ErrorProne.Annotations                      2.36.0.1       
+   > Xamarin.Google.Guava.ListenableFuture                      1.0.0.26       
+   > Xamarin.Jetbrains.Annotations                              26.0.1.2       
+   > Xamarin.Kotlin.StdLib                                      2.0.21.2       
+   > Xamarin.KotlinX.AtomicFU                                   0.26.1.1       
+   > Xamarin.KotlinX.AtomicFU.Jvm                               0.26.1.1       
+   > Xamarin.KotlinX.Coroutines.Android                         1.9.0.2        
+   > Xamarin.KotlinX.Coroutines.Core                            1.9.0.2        
+   > Xamarin.KotlinX.Coroutines.Core.Jvm                        1.9.0.2        
+   > Xamarin.KotlinX.Serialization.Core                         1.7.3.2        
+   > Xamarin.KotlinX.Serialization.Core.Jvm                     1.7.3.2        
+
+   [net9.0-ios18.4]: 
+   Top-level Package                            Requested   Resolved
+   > CommunityToolkit.Maui                      11.2.0      11.2.0  
+   > Microsoft.Extensions.Logging.Debug         9.0.0       9.0.0   
+   > Microsoft.Maui.Controls                    9.0.50      9.0.50  
+   > Microsoft.NET.ILLink.Tasks           (A)   [9.0.3, )   9.0.3   
+   > sqlite-net-pcl                             1.9.172     1.9.172 
+
+   Transitive Package                                           Resolved
+   > CommunityToolkit.Maui.Core                                 11.2.0  
+   > Microsoft.Extensions.Configuration                         9.0.0   
+   > Microsoft.Extensions.Configuration.Abstractions            9.0.0   
+   > Microsoft.Extensions.DependencyInjection                   9.0.0   
+   > Microsoft.Extensions.DependencyInjection.Abstractions      9.0.0   
+   > Microsoft.Extensions.Logging                               9.0.0   
+   > Microsoft.Extensions.Logging.Abstractions                  9.0.0   
+   > Microsoft.Extensions.Options                               9.0.0   
+   > Microsoft.Extensions.Primitives                            9.0.0   
+   > Microsoft.Maui.Controls.Build.Tasks                        9.0.50  
+   > Microsoft.Maui.Controls.Core                               9.0.50  
+   > Microsoft.Maui.Controls.Xaml                               9.0.50  
+   > Microsoft.Maui.Core                                        9.0.50  
+   > Microsoft.Maui.Essentials                                  9.0.50  
+   > Microsoft.Maui.Graphics                                    9.0.50  
+   > Microsoft.Maui.Resizetizer                                 9.0.50  
+   > SQLitePCLRaw.bundle_green                                  2.1.2   
+   > SQLitePCLRaw.core                                          2.1.2   
+   > SQLitePCLRaw.provider.sqlite3                              2.1.2   
+   > System.Memory                                              4.5.3   
+   > System.Runtime.InteropServices.NFloat.Internal             6.0.1   
+
+   [net9.0-maccatalyst18.4]: 
+   Top-level Package                            Requested   Resolved
+   > CommunityToolkit.Maui                      11.2.0      11.2.0  
+   > Microsoft.Extensions.Logging.Debug         9.0.0       9.0.0   
+   > Microsoft.Maui.Controls                    9.0.50      9.0.50  
+   > Microsoft.NET.ILLink.Tasks           (A)   [9.0.3, )   9.0.3   
+   > sqlite-net-pcl                             1.9.172     1.9.172 
+
+   Transitive Package                                           Resolved
+   > CommunityToolkit.Maui.Core                                 11.2.0  
+   > Microsoft.Extensions.Configuration                         9.0.0   
+   > Microsoft.Extensions.Configuration.Abstractions            9.0.0   
+   > Microsoft.Extensions.DependencyInjection                   9.0.0   
+   > Microsoft.Extensions.DependencyInjection.Abstractions      9.0.0   
+   > Microsoft.Extensions.Logging                               9.0.0   
+   > Microsoft.Extensions.Logging.Abstractions                  9.0.0   
+   > Microsoft.Extensions.Options                               9.0.0   
+   > Microsoft.Extensions.Primitives                            9.0.0   
+   > Microsoft.Maui.Controls.Build.Tasks                        9.0.50  
+   > Microsoft.Maui.Controls.Core                               9.0.50  
+   > Microsoft.Maui.Controls.Xaml                               9.0.50  
+   > Microsoft.Maui.Core                                        9.0.50  
+   > Microsoft.Maui.Essentials                                  9.0.50  
+   > Microsoft.Maui.Graphics                                    9.0.50  
+   > Microsoft.Maui.Resizetizer                                 9.0.50  
+   > SQLitePCLRaw.bundle_green                                  2.1.2   
+   > SQLitePCLRaw.core                                          2.1.2   
+   > SQLitePCLRaw.lib.e_sqlite3                                 2.1.2   
+   > SQLitePCLRaw.provider.e_sqlite3                            2.1.2   
+   > System.Memory                                              4.5.3   
+
+(A) : Auto-referenced package.
